@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Hakkımızda - {{ SITE_ADI }}{% endblock %}
+
+{% block content %}
+<div class="icerik-blok">
+  <h1>Hakkımızda</h1>
+
+  <h2>{{ SITE_ADI }}</h2>
+  <p>
+    Sitemiz; mükelleflerin yasal yollarla vergi yükünü düşüren <strong>vergi indirimleri</strong>,
+    <strong>indirimli matrah uygulamaları</strong>, <strong>istisna ve indirim hesaplamalarını</strong>
+    otomatize eden masaüstü ve web yazılımlarını mali müşavir ve YMM ofislerine sunan bir platformdur.
+  </p>
+  <p>
+    Tüm program hakları ve site sahipliği <strong>{{ SITE_SAHIBI }}</strong> adına kayıtlıdır.
+    İletişim için: <a href="tel:{{ SITE_TELEFON | replace(' ','') }}">{{ SITE_TELEFON }}</a> /
+    <a href="mailto:{{ SITE_EMAIL }}">{{ SITE_EMAIL }}</a>.
+  </p>
+
+  <h2>Programlarımız Neye Yarar?</h2>
+  <p>
+    Türk vergi mevzuatı, mükelleflere pek çok yasal indirim, istisna ve avantaj sunar. Ancak bu
+    avantajların hesaplanması mevzuatın karmaşıklığı nedeniyle uzun ve hataya açıktır. Programlarımız;
+  </p>
+  <ul class="ozellik-list">
+    <li><strong>AR-GE İndirimi:</strong> 5746 sayılı Kanun kapsamında matrahtan düşülecek tutarın hesaplanması</li>
+    <li><strong>İndirimli Kurumlar Vergisi:</strong> KVK m.32/A uyarınca yatırım teşviki kapsamında düşük oranlı vergi</li>
+    <li><strong>Finansman Gider Kısıtlaması:</strong> KVK m.11/1-i kapsamında KKEG'in doğru hesaplanması</li>
+    <li><strong>KKM İstisnası:</strong> KVK Geçici m.14 kapsamında kur korumalı mevduat kazanç istisnası</li>
+    <li><strong>Tam Tasdik Raporu - Hesap İncelemeleri:</strong> Mizan + Beyanname → Word çıktısı</li>
+    <li><strong>Enflasyon Düzeltmesi:</strong> VUK Mük. m.298/A kapsamı kontrol</li>
+  </ul>
+
+  <h2>Yaklaşımımız</h2>
+  <p>
+    Programlarımız <strong>"veri uydurmaz"</strong> ilkesiyle çalışır. Her tutar mizan, muavin,
+    beyanname veya çalışma kağıdı satırına bağlanır. Eksik veri varsa metin üretimi durdurulur,
+    eksik belge listesi kullanıcıya gösterilir. Bu yaklaşım, YMM mesleki sorumluluk sigortası ve
+    denetim süreçlerinde rapor savunulabilirliğini garanti altına alır.
+  </p>
+
+  <h2>Veri Güvenliği</h2>
+  <p>
+    Programlarımız <strong>yerel</strong> olarak ofisinizdeki bilgisayarda çalışır. Mükellef
+    verisi (mizan, beyanname, muavin, ad-soyad, vergi no) buluta gönderilmez. Bu yaklaşım 6698
+    sayılı Kişisel Verilerin Korunması Kanunu (KVKK) uyumu açısından da gerekli olan yöntemdir.
+  </p>
+
+  <h2>Geliştirme Yol Haritası</h2>
+  <ul class="ozellik-list">
+    <li>Tam Tasdik Raporu - Hesap İncelemeleri (yayında, ücretsiz)</li>
+    <li>5746 Sayılı Kanun AR-GE İndirim Hesaplama (yayında)</li>
+    <li>Finansman Gider Kısıtlaması (KVK m.11/1-i) - geliştirme aşamasında</li>
+    <li>İndirimli Kurumlar Vergisi (KVK m.32/A) - geliştirme aşamasında</li>
+    <li>KKM İstisnası (KVK Geçici m.14) - planlanan</li>
+    <li>Enflasyon Düzeltmesi Otomasyonu - planlanan</li>
+    <li>İştirak Kazançları İstisnası (KVK m.5/1-a) - planlanan</li>
+    <li>Taşınmaz/İştirak Satış Kazancı İstisnası (KVK m.5/1-e) - planlanan</li>
+  </ul>
+</div>
+{% endblock %}

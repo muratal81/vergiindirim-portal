@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}{{ SITE_ADI }} - Vergi Hesaplama ve Tam Tasdik Programları{% endblock %}
+
+{% block hero %}
+<section class="hero">
+  <div class="container">
+    <h1>Vergi <span class="vurgu">İndirim</span> ve İndirimli Matrah Programları</h1>
+    <p>
+      Mükellefinizin <strong>matrahını yasal yollardan düşüren</strong> tüm vergi avantajlarını
+      otomatik hesaplayan masaüstü ve web programları: AR-GE İndirimi, İndirimli Kurumlar Vergisi,
+      Finansman Gider Kısıtlaması, KKM İstisnası, Tam Tasdik Raporu. Mevzuata uyumlu, denetlenebilir,
+      ofiste yerel çalışır.
+    </p>
+    <div class="btn-grup">
+      <a href="{{ url_for('programlar') }}" class="btn btn-primary">Programları İncele</a>
+      <a href="{{ url_for('iletisim') }}" class="btn btn-outline">İletişime Geçin</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block content %}
+
+<!-- OZELLIKLER -->
+<div class="feature-row">
+  <div class="feature">
+    <div class="icon">✓</div>
+    <h4>Mevzuat Referanslı</h4>
+    <p>Her hesaplama VUK, KVK, GVK, 5746, 7440, MSUGT gibi yürürlükteki ilgili mevzuata atıfla üretilir. Çıktılarda referans korunur.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">§</div>
+    <h4>Denetlenebilir İzlenebilirlik</h4>
+    <p>Her tutar mizan/muavin/beyanname satırına bağlanır. YMM tasdikinde kullanılabilir; denetim izi her zaman erişilebilir.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">🔒</div>
+    <h4>Yerel Çalışma - KVKK</h4>
+    <p>Programlar mükellef verisini buluta göndermez. Tüm hesaplama ofisinizdeki bilgisayarda yapılır.</p>
+  </div>
+</div>
+
+<!-- ONE CIKAN PROGRAMLAR -->
+<div class="section-title">
+  <span class="ust-yazi">Programlarımız</span>
+  <h2>Vergi Hesaplama Yazılımları</h2>
+  <p>Her bir program, Yeminli Mali Müşavirlik uygulamasında karşılaşılan ve mevzuatı karmaşık olan özel başlıklar için geliştirilmiştir.</p>
+</div>
+
+<div class="kart-grid">
+  {% for p in on_plan %}
+  <div class="kart">
+    <span class="kategori">{{ p.kategori }}</span>
+    <h3>{{ p.ad }}</h3>
+    <p class="kart-ozet">{{ p.kisa_aciklama }}</p>
+    <div class="kart-alt">
+      <div>
+        {% if p.ucretsiz %}
+          <span class="fiyat ucretsiz">Ücretsiz</span>
+        {% else %}
+          <span class="fiyat">{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺</span>
+        {% endif %}
+        {% if p.durum == 'gelistirme' %}
+          <span class="durum-badge gelistirme">Yakında</span>
+        {% else %}
+          <span class="durum-badge aktif">Hazır</span>
+        {% endif %}
+      </div>
+      <a href="{{ url_for('program_detay', slug=p.slug) }}" class="btn btn-dark btn-sm">Detay</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- TANITICI METIN -->
+<div style="background: #fff; border-radius: 8px; padding: 36px; margin: 50px 0; border: 1px solid var(--border);">
+  <div class="section-title" style="margin-bottom: 20px;">
+    <span class="ust-yazi">Neden Bu Programlar?</span>
+    <h2>YMM Uzmanlığı Yazılıma Dönüştü</h2>
+  </div>
+  <p style="text-align: center; max-width: 800px; margin: 0 auto; color: var(--text-light); font-size: 15px;">
+    {{ SITE_ADI }} olarak özellikli vergi konularındaki yıllara dayalı tecrübemizi yazılıma
+    aktardık. Programlarımız tam tasdik raporu üslubunda otomatik metin üretir, mizan-beyanname
+    mutabakatını çapraz kontrol eder, eksik veri durumunda metin uydurmaz ve YMM/SMMM onayı
+    olmadan nihai çıktı vermez. Mevzuat değişikliklerinde tek noktadan güncelleme yapılır.
+  </p>
+</div>
+
+{% endblock %}

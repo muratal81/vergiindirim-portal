@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}İletişim - {{ SITE_ADI }}{% endblock %}
+
+{% block content %}
+<div class="icerik-blok">
+  <h1>İletişim</h1>
+  <p>Programlarımız hakkında sorularınız, kurum içi eğitim talepleri, özel ihtiyaca yönelik geliştirme ve mali müşavirlik/tam tasdik hizmetleri için bizimle iletişime geçebilirsiniz.</p>
+
+  <div class="iletisim-grid">
+    <div class="ic">
+      <h4>📞 Telefon</h4>
+      <p><a href="tel:{{ SITE_TELEFON | replace(' ','') }}">{{ SITE_TELEFON }}</a></p>
+    </div>
+    <div class="ic">
+      <h4>✉ E-posta</h4>
+      <p><a href="mailto:{{ SITE_EMAIL }}">{{ SITE_EMAIL }}</a></p>
+    </div>
+    <div class="ic">
+      <h4>👤 Sahibi</h4>
+      <p>{{ SITE_SAHIBI }}</p>
+    </div>
+  </div>
+
+  <h2>Mesai Saatleri</h2>
+  <p>
+    Pazartesi - Cuma: 09:00 - 18:00<br>
+    Cumartesi - Pazar: Kapalı (Aciliyetler için e-posta ile iletişime geçiniz)
+  </p>
+
+  <h2>Sıkça Sorulan Sorular</h2>
+
+  <h3 style="font-size: 15px; color: var(--primary); margin: 16px 0 6px;">Programları nasıl indirebilirim?</h3>
+  <p>Ücretsiz programlar üyelik oluşturduktan sonra doğrudan "İndir" butonu ile indirilebilir. Ücretli programlar için satın alma işleminin ardından ödemenin teyit edilmesiyle indirme aktifleşir.</p>
+
+  <h3 style="font-size: 15px; color: var(--primary); margin: 16px 0 6px;">Programlar mevzuat değişikliklerinde güncellenir mi?</h3>
+  <p>Evet. Ücretli programlarımız için 1 yıllık ücretsiz mevzuat güncellemesi sunulur. Yeni Tebliğ, Sirküler veya Kanun değişikliği yayınlandığında ilgili kural ve şablonlar güncellenir; üyelerimize e-posta ile bildirilir.</p>
+
+  <h3 style="font-size: 15px; color: var(--primary); margin: 16px 0 6px;">Mükellef verilerimiz güvenli mi?</h3>
+  <p>Programlarımız <strong>yerel</strong> olarak çalışır. Mizan, beyanname ve mükellef verisi sunucumuza/buluta gönderilmez. Tüm hesaplama ofisinizdeki bilgisayarda yapılır. Bu yaklaşım 6698 sayılı KVKK uyumu açısından da tercih edilen yöntemdir.</p>
+
+  <h3 style="font-size: 15px; color: var(--primary); margin: 16px 0 6px;">Özel ihtiyaca yönelik geliştirme yapılır mı?</h3>
+  <p>Evet. Ofisinizin özel mizan formatı, yerel muhasebe yazılımı çıktıları veya özelleşmiş hesaplama ihtiyaçları için ayrı geliştirme yapılabilir. İletişime geçiniz.</p>
+
+  <h3 style="font-size: 15px; color: var(--primary); margin: 16px 0 6px;">Fatura kesilir mi?</h3>
+  <p>Evet. Satın aldığınız programlar için resmi fatura kesilir; talep edilirse e-arşiv fatura olarak iletilir.</p>
+</div>
+{% endblock %}

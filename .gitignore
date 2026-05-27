@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.venv/
+venv/
+env/
+
+# Yerel veriler (production'da Render PostgreSQL kullanilacak)
+data/*.db
+data/*.sqlite
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Env
+.env
+.env.local
+
+# Zip kaynaklari (downloads klasoru disinda)
+_zip_kaynak/
+
+# Test ciktilari
+ornek_ciktilar/

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Programlar - {{ SITE_ADI }}{% endblock %}
+
+{% block content %}
+<div class="section-title">
+  <span class="ust-yazi">Tüm Programlar</span>
+  <h2>Vergi Hesaplama ve Tam Tasdik Yazılımları</h2>
+  <p>Yeminli Mali Müşavirlik uygulamasında özellikli vergi konularını otomatize eden masaüstü/web programları.</p>
+</div>
+
+{% if kategoriler %}
+<div style="text-align: center; margin-bottom: 30px;">
+  <a href="{{ url_for('programlar') }}" class="btn btn-sm {% if not secili_kategori %}btn-primary{% else %}btn-dark{% endif %}">Tümü</a>
+  {% for k in kategoriler %}
+    <a href="{{ url_for('programlar', kategori=k) }}" class="btn btn-sm {% if secili_kategori == k %}btn-primary{% else %}btn-dark{% endif %}" style="margin-left: 6px;">{{ k }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="kart-grid">
+  {% for p in programlar %}
+  <div class="kart">
+    <span class="kategori">{{ p.kategori }}</span>
+    <h3>{{ p.ad }}</h3>
+    <p class="kart-ozet">{{ p.kisa_aciklama }}</p>
+    {% if p.mevzuat %}
+      <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">
+        <strong>Mevzuat:</strong> {{ p.mevzuat }}
+      </p>
+    {% endif %}
+    <div class="kart-alt">
+      <div>
+        {% if p.ucretsiz %}
+          <span class="fiyat ucretsiz">Ücretsiz</span>
+        {% else %}
+          <span class="fiyat">{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺</span>
+        {% endif %}
+        {% if p.durum == 'gelistirme' %}
+          <span class="durum-badge gelistirme">Yakında</span>
+        {% else %}
+          <span class="durum-badge aktif">Hazır</span>
+        {% endif %}
+      </div>
+      <a href="{{ url_for('program_detay', slug=p.slug) }}" class="btn btn-dark btn-sm">Detay</a>
+    </div>
+  </div>
+  {% else %}
+    <p style="text-align: center; color: var(--text-light); grid-column: 1/-1;">Bu kategoride henüz program bulunmamaktadır.</p>
+  {% endfor %}
+</div>
+{% endblock %}

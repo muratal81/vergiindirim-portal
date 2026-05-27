@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Hesabım - {{ SITE_ADI }}{% endblock %}
+
+{% block content %}
+<div class="section-title" style="text-align: left;">
+  <span class="ust-yazi">Hesabım</span>
+  <h2>Merhaba, {{ current_user.ad_soyad }}</h2>
+  <p style="margin: 0;">{{ current_user.unvan }} {% if current_user.sirket %}- {{ current_user.sirket }}{% endif %}</p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-top: 24px;">
+
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 24px;">
+    <h3 style="color: var(--primary); font-size: 16px; margin-bottom: 16px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; display: inline-block;">Hesap Bilgileri</h3>
+    <table style="width: 100%; font-size: 13px;">
+      <tr><td style="padding: 6px 0; color: var(--text-light);">E-posta</td><td>{{ current_user.email }}</td></tr>
+      <tr><td style="padding: 6px 0; color: var(--text-light);">Ad Soyad</td><td>{{ current_user.ad_soyad }}</td></tr>
+      <tr><td style="padding: 6px 0; color: var(--text-light);">Ünvan</td><td>{{ current_user.unvan }}</td></tr>
+      {% if current_user.sirket %}<tr><td style="padding: 6px 0; color: var(--text-light);">Şirket</td><td>{{ current_user.sirket }}</td></tr>{% endif %}
+      {% if current_user.telefon %}<tr><td style="padding: 6px 0; color: var(--text-light);">Telefon</td><td>{{ current_user.telefon }}</td></tr>{% endif %}
+      <tr><td style="padding: 6px 0; color: var(--text-light);">Kayıt Tarihi</td><td>{{ current_user.kayit_tarihi.strftime('%d.%m.%Y') }}</td></tr>
+    </table>
+    <a href="{{ url_for('cikis') }}" class="btn btn-dark btn-sm btn-block" style="margin-top: 18px;">Çıkış Yap</a>
+  </div>
+
+  <div>
+    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-bottom: 20px;">
+      <h3 style="color: var(--primary); font-size: 16px; margin-bottom: 16px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; display: inline-block;">İndirmelerim</h3>
+      {% if indirmeler %}
+      <table class="veri">
+        <thead><tr><th>Program</th><th>Tarih</th><th>Tekrar İndir</th></tr></thead>
+        <tbody>
+          {% for d in indirmeler %}
+          <tr>
+            <td>{{ d.program_id }}</td>
+            <td>{{ d.tarih.strftime('%d.%m.%Y %H:%M') }}</td>
+            <td><a href="#" class="btn btn-dark btn-sm">İndir</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p style="color: var(--text-light); font-size: 14px;">Henüz herhangi bir program indirmediniz. <a href="{{ url_for('programlar') }}">Programları inceleyin →</a></p>
+      {% endif %}
+    </div>
+
+    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 24px;">
+      <h3 style="color: var(--primary); font-size: 16px; margin-bottom: 16px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; display: inline-block;">Siparişlerim</h3>
+      {% if siparisler %}
+      <table class="veri">
+        <thead><tr><th>Program</th><th>Tutar</th><th>Durum</th><th>Tarih</th></tr></thead>
+        <tbody>
+          {% for s in siparisler %}
+          <tr>
+            <td>{{ s.program_id }}</td>
+            <td>{{ "{:,.0f}".format(s.tutar or 0).replace(",", ".") }} ₺</td>
+            <td>
+              {% if s.durum == 'odendi' %}<span class="durum-badge aktif">Ödendi</span>
+              {% elif s.durum == 'bekliyor' %}<span class="durum-badge gelistirme">Ödeme Bekliyor</span>
+              {% else %}{{ s.durum }}{% endif %}
+            </td>
+            <td>{{ s.tarih.strftime('%d.%m.%Y') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p style="color: var(--text-light); font-size: 14px;">Henüz herhangi bir siparişiniz bulunmamaktadır.</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}
