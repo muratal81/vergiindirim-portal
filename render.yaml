@@ -1,24 +1,16 @@
-# Render.com blueprint - tek tikla deploy
-# https://render.com/docs/blueprint-spec
-databases:
-  - name: vergiindirim-db
-    databaseName: vergiindirim
-    user: vergiindirim
-    plan: free
-
+# Render.com blueprint
 services:
   - type: web
     name: vergiindirim
     runtime: python
     plan: starter
-    region: frankfurt
     branch: main
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn 'wsgi:app' --bind 0.0.0.0:$PORT --workers 2 --timeout 90"
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --workers 2 --timeout 90
     healthCheckPath: /
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11
+        value: "3.11"
       - key: DATABASE_URL
         fromDatabase:
           name: vergiindirim-db
@@ -27,13 +19,7 @@ services:
         generateValue: true
       - key: RENDER
         value: "true"
-      - key: SITE_DOMAIN
-        value: vergiindirim.com.tr
-      - key: SITE_ADI
-        value: "Vergi İndirim Programları"
-      - key: SITE_SAHIBI
-        value: "Murat Alan"
-      - key: SITE_EMAIL
-        value: "muratal81@gmail.com"
-      - key: SITE_TELEFON
-        value: "0532 177 47 95"
+
+databases:
+  - name: vergiindirim-db
+    plan: free
