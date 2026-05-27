@@ -27,6 +27,14 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MAX_CONTENT_LENGTH = 50 * 1024 * 1024
 
+    # PostgreSQL SSL baglanti stabilitesi (Render multi-worker icin kritik)
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,      # Her query oncesi connection ping (bad record mac fix)
+        "pool_recycle": 280,        # 280 saniyede connection'i yenile
+        "pool_size": 5,
+        "max_overflow": 10,
+    }
+
     # Production'da behind-proxy oldugu icin secure cookies'ler aktif
     SESSION_COOKIE_SECURE = os.environ.get("RENDER", "") != ""
     REMEMBER_COOKIE_SECURE = os.environ.get("RENDER", "") != ""
