@@ -21,6 +21,9 @@ class User(UserMixin, db.Model):
     kayit_tarihi = db.Column(db.DateTime, default=datetime.utcnow)
     son_giris = db.Column(db.DateTime)
     aktif = db.Column(db.Boolean, default=True)
+    # Sifre sifirlama
+    reset_token = db.Column(db.String(64), index=True)
+    reset_expiry = db.Column(db.DateTime)
 
     indirmeler = db.relationship("Download", backref="user", lazy=True)
     siparisler = db.relationship("Order", backref="user", lazy=True)
@@ -284,10 +287,6 @@ def seed_admin():
     """Varsayilan admin kullanicisi (ilk acilis)."""
     if User.query.filter_by(email="muratal81@gmail.com").first():
         return
-    # Eski admin varsa sil (eski sahiplik konfigurasyonu)
-    eski = User.query.filter_by(email="admin@cibilenymm.com.tr").first()
-    if eski:
-        db.session.delete(eski)
     admin = User(
         email="muratal81@gmail.com",
         ad_soyad="Murat Alan",

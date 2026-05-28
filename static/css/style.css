@@ -318,7 +318,7 @@ section.block.navy { background: var(--navy-900); color: var(--white); }
 footer.site {
   background: var(--navy-900); color: #aebbd4; padding: 60px 0 26px;
 }
-footer.site .f-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.2fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,.08); }
+footer.site .f-grid { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr 1.1fr; gap: 32px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,.08); }
 footer.site h4 { color: var(--white); font-size: 15px; margin-bottom: 18px; font-family: var(--font-head); }
 footer.site a { color: #aebbd4; display: block; margin-bottom: 10px; font-size: 14.5px; }
 footer.site a:hover { color: var(--gold-300); }

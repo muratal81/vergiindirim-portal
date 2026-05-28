@@ -1,4 +1,4 @@
-"""Cumhur Inan Bilen YMM - Vergi Programlari Portali
+"""Vergi Indirim Programlari Portali - Murat Alan
 
 Calistirma:
     py app.py
@@ -19,6 +19,7 @@ from flask_login import (LoginManager, login_user, logout_user, login_required,
                          current_user)
 
 import uuid
+import secrets
 import functools
 from datetime import timedelta
 from flask import jsonify
@@ -26,6 +27,7 @@ from flask import jsonify
 from config import Config, DOWNLOADS_DIR
 from models import (db, User, Program, ProgramOzellik, Download, Order,
                     License, CollabRequest, ContactMessage, seed_programs, seed_admin)
+import mailer
 
 
 def _yeni_lisans_anahtari() -> str:
@@ -118,15 +120,16 @@ def create_app() -> Flask:
             flash("İndirme dosyası bulunamadı.", "danger")
             return redirect(url_for("program_detay", slug=slug))
 
-        # Ucretli programlar lisans (onay + 1 yil gecerlilik) gerektirir
-        if not program.ucretsiz:
+        # Admin (site sahibi) tum programlari onaysiz indirir
+        if not current_user.is_admin:
+            # Tum programlar (ucretsiz dahil) indirme onayi gerektirir
             lisans = (License.query
                       .filter_by(user_id=current_user.id, program_id=program.id, durum="aktif")
                       .order_by(License.bitis.desc()).first())
             if not lisans or not lisans.gecerli_mi:
                 flash(
-                    "Bu program ücretli olup lisans gerektirir. Lütfen lisans talep edin; "
-                    "talebiniz onaylandığında indirme aktifleşecektir.", "warning"
+                    "Bu programı indirmek için önce onay gereklidir. Talebiniz alınınca "
+                    "size dönüş yapılacak; onaylandığında indirme aktifleşecektir.", "warning"
                 )
                 return redirect(url_for("lisans_talep", slug=slug))
 
@@ -141,14 +144,15 @@ def create_app() -> Flask:
     @login_required
     def lisans_talep(slug):
         program = Program.query.filter_by(slug=slug).first_or_404()
-        if program.ucretsiz:
+        # Admin onaysiz indirir
+        if current_user.is_admin:
             return redirect(url_for("indir", slug=slug))
-        # Zaten aktif lisans var mi?
+        # Zaten aktif lisans/izin var mi?
         aktif = License.query.filter_by(
             user_id=current_user.id, program_id=program.id, durum="aktif").first()
         if aktif and aktif.gecerli_mi:
-            flash("Bu program için zaten geçerli bir lisansınız var.", "info")
-            return redirect(url_for("panel"))
+            flash("Bu program için zaten geçerli indirme izniniz var.", "info")
+            return redirect(url_for("indir", slug=slug))
         # Bekleyen talep var mi?
         bekleyen = License.query.filter_by(
             user_id=current_user.id, program_id=program.id, durum="bekliyor").first()
@@ -156,9 +160,22 @@ def create_app() -> Flask:
             yeni = License(user_id=current_user.id, program_id=program.id, durum="bekliyor")
             db.session.add(yeni)
             db.session.commit()
+            # ADMIN'E MAIL BILDIRIMI
+            ucret = "Ücretsiz" if program.ucretsiz else f"{program.fiyat:,.0f} TL"
+            mailer.bildir_admin(
+                f"Yeni indirme talebi: {program.ad}",
+                f"<h3>Yeni Program İndirme Talebi</h3>"
+                f"<p><b>Program:</b> {program.ad} ({ucret})</p>"
+                f"<p><b>Kullanıcı:</b> {current_user.ad_soyad} ({current_user.unvan})</p>"
+                f"<p><b>E-posta:</b> {current_user.email}</p>"
+                f"<p><b>Telefon:</b> {current_user.telefon or '-'}</p>"
+                f"<p><b>Şirket:</b> {current_user.sirket or '-'}</p>"
+                f"<p>Onaylamak için yönetim paneline girin: "
+                f"<a href='{url_for('admin', _external=True)}'>Yönetim Paneli</a></p>"
+            )
         flash(
-            f"Lisans talebiniz alındı. Onay ve ödeme bilgileri için {app.config['SITE_TELEFON']} "
-            "numarasından iletişime geçebilirsiniz. Onaylandığında programı indirebilirsiniz.",
+            f"İndirme talebiniz alındı. En kısa sürede değerlendirilip size dönüş yapılacaktır. "
+            f"Acele durumlar için {app.config['SITE_TELEFON']}.",
             "success"
         )
         return redirect(url_for("panel"))
@@ -191,6 +208,22 @@ def create_app() -> Flask:
     @app.route("/hakkimizda")
     def hakkimizda():
         return render_template("hakkimizda.html")
+
+    @app.route("/yasal/<key>")
+    def yasal(key):
+        import legal_content
+        cfg = {
+            "SITE_SAHIBI": app.config["SITE_SAHIBI"],
+            "SITE_EMAIL": app.config["SITE_EMAIL"],
+            "SITE_TELEFON": app.config["SITE_TELEFON"],
+            "SITE_ADRES": app.config["SITE_ADRES"],
+            "SITE_DOMAIN": app.config["SITE_DOMAIN"],
+        }
+        sonuc = legal_content.render_icerik(key, cfg)
+        if not sonuc:
+            abort(404)
+        baslik, govde = sonuc
+        return render_template("yasal.html", baslik=baslik, govde=govde)
 
     @app.route("/iletisim", methods=["GET", "POST"])
     def iletisim():
@@ -302,6 +335,64 @@ def create_app() -> Flask:
         flash("Çıkış yapıldı.", "info")
         return redirect(url_for("index"))
 
+    # ------------------ SIFRE SIFIRLAMA ----------------------
+    @app.route("/sifremi-unuttum", methods=["GET", "POST"])
+    def sifremi_unuttum():
+        if request.method == "POST":
+            email = request.form.get("email", "").strip().lower()
+            user = User.query.filter_by(email=email).first()
+            # Guvenlik: kullanici olsun olmasin ayni mesaj (email enumeration onleme)
+            if user:
+                token = secrets.token_urlsafe(32)
+                user.reset_token = token
+                user.reset_expiry = datetime.utcnow() + timedelta(hours=2)
+                db.session.commit()
+                link = url_for("sifre_sifirla", token=token, _external=True)
+                # Kullaniciya mail (SMTP varsa)
+                gonderildi = mailer.send_mail(
+                    user.email, "Şifre Sıfırlama — Vergi İndirim",
+                    f"<p>Merhaba {user.ad_soyad},</p>"
+                    f"<p>Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın (2 saat geçerli):</p>"
+                    f"<p><a href='{link}'>{link}</a></p>"
+                    f"<p>Bu talebi siz yapmadıysanız bu e-postayı yok sayın.</p>"
+                )
+                # Admin'e de bildir (manuel iletim icin)
+                mailer.bildir_admin(
+                    "Şifre sıfırlama talebi",
+                    f"<p>{user.ad_soyad} ({user.email}) şifre sıfırlama talep etti.</p>"
+                    f"<p>Sıfırlama linki: <a href='{link}'>{link}</a></p>"
+                    f"<p>Mail kullanıcıya iletildi mi: {'Evet' if gonderildi else 'HAYIR — SMTP ayarlı değil, linki siz iletin'}</p>"
+                )
+            flash(
+                "Eğer bu e-posta sistemde kayıtlıysa, şifre sıfırlama bağlantısı gönderildi. "
+                "Mail ulaşmazsa " + app.config["SITE_TELEFON"] + " numarasından bize ulaşın.", "info"
+            )
+            return redirect(url_for("giris"))
+        return render_template("sifremi_unuttum.html")
+
+    @app.route("/sifre-sifirla/<token>", methods=["GET", "POST"])
+    def sifre_sifirla(token):
+        user = User.query.filter_by(reset_token=token).first()
+        if not user or not user.reset_expiry or user.reset_expiry < datetime.utcnow():
+            flash("Sıfırlama bağlantısı geçersiz veya süresi dolmuş. Lütfen tekrar talep edin.", "danger")
+            return redirect(url_for("sifremi_unuttum"))
+        if request.method == "POST":
+            sifre = request.form.get("sifre", "")
+            sifre2 = request.form.get("sifre2", "")
+            if len(sifre) < 6:
+                flash("Şifre en az 6 karakter olmalıdır.", "danger")
+                return render_template("sifre_sifirla.html", token=token)
+            if sifre != sifre2:
+                flash("Şifreler eşleşmiyor.", "danger")
+                return render_template("sifre_sifirla.html", token=token)
+            user.sifre_belirle(sifre)
+            user.reset_token = None
+            user.reset_expiry = None
+            db.session.commit()
+            flash("Şifreniz güncellendi. Yeni şifrenizle giriş yapabilirsiniz.", "success")
+            return redirect(url_for("giris"))
+        return render_template("sifre_sifirla.html", token=token)
+
     # ------------------ KULLANICI PANELI ----------------------
     @app.route("/panel")
     @login_required
@@ -352,7 +443,20 @@ def create_app() -> Flask:
         lisans.onaylayan = current_user.email
         lisans.onay_tarihi = datetime.utcnow()
         db.session.commit()
-        flash(f"Lisans onaylandı. Anahtar: {lisans.anahtar} (1 yıl geçerli)", "success")
+        # Kullaniciya onay maili
+        kullanici = User.query.get(lisans.user_id)
+        prog = Program.query.get(lisans.program_id)
+        if kullanici and prog:
+            mailer.send_mail(
+                kullanici.email,
+                f"İndirme onaylandı: {prog.ad}",
+                f"<p>Merhaba {kullanici.ad_soyad},</p>"
+                f"<p><b>{prog.ad}</b> programı için indirme talebiniz <b>onaylandı</b>.</p>"
+                f"<p>Lisans anahtarınız: <b>{lisans.anahtar}</b> (1 yıl geçerli)</p>"
+                f"<p>Programı indirmek için giriş yapın: "
+                f"<a href='{url_for('program_detay', slug=prog.slug, _external=True)}'>Program sayfası</a></p>"
+            )
+        flash(f"Lisans onaylandı. Anahtar: {lisans.anahtar} (1 yıl geçerli). Kullanıcıya mail gönderildi.", "success")
         return redirect(url_for("admin"))
 
     @app.route("/admin/lisans/<int:lid>/iptal")
