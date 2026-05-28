@@ -372,7 +372,14 @@ footer.site .copyright { padding-top: 24px; display: flex; justify-content: spac
   100% { transform: translate3d(3%,-2%,0) scale(1.04); opacity:.92; }
 }
 .hero .container { z-index: 2; }
-.hero h1 { font-size: 56px; line-height: 1.08; }
+/* Hero artik tek kolon (sag kart kaldirildi) — ortali ve ferah */
+.hero .container { grid-template-columns: 1fr; text-align: center; max-width: 920px; }
+.hero .hero-text { display: flex; flex-direction: column; align-items: center; }
+.hero p.lead { max-width: 680px; }
+.hero-cta { justify-content: center; }
+.hero-stats { justify-content: center; gap: 56px; margin-top: 8px; }
+.hero h1 { font-size: 58px; line-height: 1.08; max-width: 900px; }
+.hero { padding: 110px 0 120px; }
 .hero h1 .accent {
   background: linear-gradient(100deg, var(--gold-300), var(--gold-500) 50%, #ffe9a8);
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
