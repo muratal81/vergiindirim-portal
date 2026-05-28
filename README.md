@@ -10,6 +10,21 @@
 - **İndirimli Kurumlar Vergisi** (KVK m.32/A)
 - (Yol haritasında: KKM İstisnası, Enflasyon Düzeltmesi, İştirak Kazançları İstisnası)
 
+## KVK 32/A v1.1 Notları
+
+- Uygun harcama ile arsa/arazi, kur farkı, finansman ve kapsam dışı harcama ayrımı eklendi.
+- İşletme döneminde yatırım kazancı ve diğer faaliyet kazancı ayrımı güçlendirildi.
+- Yurt içi asgari kurumlar vergisi oranında kullanıcı girdisi hesaba dahil edildi.
+- Seçili dönem silme işlemi motor toplamlarını bozmayacak şekilde yeniden hesaplama yapar.
+- Portal kaydı mevcut veritabanında da güncellenecek şekilde upsert mantığına alındı.
+
+## KVK 32/A Geliştirme Yol Haritası
+
+- Geçici 8 kapsamındaki imalat sanayi avantajları için yıl ve harcama bazlı otomatik katmanlama.
+- Çoklu teşvik belgesi bulunan mükelleflerde matrah ve YKT dağıtım motoru.
+- Kitaptaki örneklerden regresyon test senaryoları.
+- Beyanname kodları ve asgari kurumlar vergisi etkisi için detaylı denetim raporu.
+
 ## Teknoloji
 
 - **Backend:** Python 3.11 + Flask 3 + SQLAlchemy 2 + Flask-Login

@@ -371,8 +371,8 @@ def fix_legacy_texts():
 
 def update_program_settings():
     """Program fiyat / ucret / durum ayarlarini mevcut DB'de gunceller.
-    seed_programs sadece bos DB'de calistigi icin, fiyat degisikliklerinin
-    Render PostgreSQL'e yansimasi bu fonksiyonla saglanir."""
+    seed_programs program iceriklerini de gunceller; bu fonksiyon ise fiyat,
+    ucret ve durum gibi yayin ayarlarini merkezi olarak korur."""
     ayarlar = {
         # slug: (ucretsiz, fiyat, durum)  durum: aktif|gelistirme|pasif
         "tt-hesap-incelemeleri":      (False, 2500.0,  "gelistirme"),

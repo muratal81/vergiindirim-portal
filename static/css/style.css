@@ -350,3 +350,125 @@ footer.site .copyright { padding-top: 24px; display: flex; justify-content: spac
   .topbar .sep { margin-left: 10px; }
 }
 .mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--navy-800); font-size: 24px; }
+
+/* ============================================================
+   PREMIUM ENHANCEMENTS v2 — aurora, glassmorphism, animasyon
+   ============================================================ */
+
+/* ---- HERO: animasyonlu aurora arka plan + yuzen orblar ---- */
+.hero { background: #060f24; }
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(40% 50% at 15% 20%, rgba(217,165,33,.28), transparent 60%),
+    radial-gradient(45% 55% at 85% 25%, rgba(43,79,150,.55), transparent 60%),
+    radial-gradient(50% 60% at 70% 90%, rgba(24,185,160,.22), transparent 60%),
+    radial-gradient(45% 55% at 25% 85%, rgba(102,99,255,.25), transparent 60%);
+  filter: blur(20px); animation: auroraMove 16s ease-in-out infinite alternate;
+}
+@keyframes auroraMove {
+  0%   { transform: translate3d(0,0,0) scale(1); opacity:.9; }
+  50%  { transform: translate3d(-3%,2%,0) scale(1.08); opacity:1; }
+  100% { transform: translate3d(3%,-2%,0) scale(1.04); opacity:.92; }
+}
+.hero .container { z-index: 2; }
+.hero h1 { font-size: 56px; line-height: 1.08; }
+.hero h1 .accent {
+  background: linear-gradient(100deg, var(--gold-300), var(--gold-500) 50%, #ffe9a8);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+/* ---- HERO CARD: glassmorphism + yuzme + parlama ---- */
+.hero-card {
+  background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: 0 30px 70px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.18);
+  backdrop-filter: blur(16px) saturate(160%);
+  animation: floatCard 6s ease-in-out infinite; position: relative; overflow: hidden;
+}
+.hero-card::before {
+  content: ""; position: absolute; top: -60%; left: -30%; width: 60%; height: 220%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+  transform: rotate(18deg); animation: cardShine 7s linear infinite;
+}
+@keyframes floatCard { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+@keyframes cardShine { 0%{left:-40%} 60%,100%{left:130%} }
+.hero-card .hc-row { transition: background .2s; }
+.hero-card .hc-row:hover { background: rgba(255,255,255,.05); border-radius: 8px; }
+.hero-card .hc-dot { animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(24,185,160,.6)} 50%{box-shadow:0 0 0 8px rgba(24,185,160,0)} }
+
+/* ---- BUTON: parlama (shine) hover ---- */
+.btn-gold, .btn-navy { position: relative; overflow: hidden; }
+.btn-gold::after, .btn-navy::after {
+  content: ""; position: absolute; top: 0; left: -120%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent);
+  transform: skewX(-20deg); transition: left .6s;
+}
+.btn-gold:hover::after, .btn-navy:hover::after { left: 130%; }
+
+/* ---- STAT sayilari: glow ---- */
+.hero-stats .stat .num { text-shadow: 0 0 24px rgba(233,187,69,.45); }
+
+/* ---- SCROLL REVEAL ---- */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ---- PROGRAM KART: gradient cerceve + glow hover ---- */
+.prog-card { transition: transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s, border-color .3s; }
+.prog-card:hover { transform: translateY(-8px); box-shadow: 0 28px 60px rgba(11,31,68,.22), 0 0 0 1px rgba(217,165,33,.35); }
+.pc-icon { transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+.prog-card:hover .pc-icon { transform: rotate(-6deg) scale(1.08); }
+
+/* ---- FEATURE ikon: hover pop ---- */
+.feature .f-icon { transition: transform .35s; }
+.feature:hover .f-icon { transform: translateY(-4px) scale(1.06); }
+
+/* ---- NAVY section: ince izgara doku ---- */
+section.block.navy { position: relative; overflow: hidden; }
+section.block.navy::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.05) 1px, transparent 0);
+  background-size: 30px 30px; opacity: .5; pointer-events: none;
+}
+section.block.navy > .container { position: relative; z-index: 2; }
+/* navy section icinde altin glow */
+section.block.navy::after {
+  content: ""; position: absolute; width: 600px; height: 600px; right: -200px; top: -150px;
+  background: radial-gradient(circle, rgba(217,165,33,.12), transparent 70%); pointer-events: none;
+}
+
+/* ---- STEP daireleri: birbirine cizgi ---- */
+.steps-wrap { position: relative; }
+
+/* ---- COLLAB: hareketli glow ---- */
+.collab::after { animation: floatCard 8s ease-in-out infinite; }
+
+/* ---- eyebrow: parlak nokta ---- */
+.section-head .eyebrow::before {
+  content: "● "; color: var(--gold-400); font-size: 10px; vertical-align: middle;
+}
+
+/* ---- baslik alti gradient cizgi ---- */
+.section-head h2 { position: relative; display: inline-block; }
+.section-head h2::after {
+  content: ""; display: block; width: 64px; height: 3px; margin: 14px auto 0;
+  background: linear-gradient(90deg, var(--gold-400), var(--navy-500)); border-radius: 2px;
+}
+
+/* ---- trustbar: hover lift ---- */
+.trustbar .ti { transition: transform .25s, color .25s; }
+.trustbar .ti:hover { transform: translateY(-2px); color: var(--navy-800); }
+
+/* ---- responsive premium ---- */
+@media (max-width: 980px) { .hero h1 { font-size: 40px; } }
+@media (max-width: 640px) {
+  .hero h1 { font-size: 33px; }
+  .hero-card { animation: none; }
+}
+/* erisilebilirlik: hareket azaltma tercihi */
+@media (prefers-reduced-motion: reduce) {
+  .hero::after, .hero-card, .hero-card::before, .hc-dot, .collab::after { animation: none !important; }
+  .reveal { opacity: 1; transform: none; }
+}

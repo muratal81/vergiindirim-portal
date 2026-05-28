@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20260528c">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20260528d">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23102a5c'/><text x='50' y='70' font-size='54' font-family='Arial' font-weight='bold' fill='%23f3d27e' text-anchor='middle'>V</text></svg>">
   {% block head_extra %}{% endblock %}
 </head>
@@ -128,5 +128,38 @@
     </div>
   </footer>
 
+  <script>
+    // Scroll reveal — bolumler gorununce yumusakca belirir
+    (function () {
+      var els = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window) || !els.length) {
+        els.forEach(function (e) { e.classList.add('visible'); });
+      } else {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) { en.target.classList.add('visible'); io.unobserve(en.target); }
+          });
+        }, { threshold: 0.12 });
+        els.forEach(function (e) { io.observe(e); });
+      }
+      // Sayac animasyonu (data-count)
+      var nums = document.querySelectorAll('[data-count]');
+      if ('IntersectionObserver' in window && nums.length) {
+        var io2 = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (!en.isIntersecting) return;
+            var el = en.target, hedef = el.getAttribute('data-count'), suffix = el.getAttribute('data-suffix') || '';
+            var n = parseInt(hedef, 10), cur = 0, adim = Math.max(1, Math.ceil(n / 40));
+            var t = setInterval(function () {
+              cur += adim; if (cur >= n) { cur = n; clearInterval(t); }
+              el.textContent = cur + suffix;
+            }, 28);
+            io2.unobserve(el);
+          });
+        }, { threshold: 0.5 });
+        nums.forEach(function (e) { io2.observe(e); });
+      }
+    })();
+  </script>
 </body>
 </html>

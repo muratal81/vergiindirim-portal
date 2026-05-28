@@ -17,8 +17,8 @@
         <a href="{{ url_for('isbirligi') }}" class="btn btn-ghost btn-lg">Özel Çözüm İste</a>
       </div>
       <div class="hero-stats">
-        <div class="stat"><div class="num">4+</div><div class="lbl">Hazır & geliştirilen program</div></div>
-        <div class="stat"><div class="num">%100</div><div class="lbl">Mevzuat referanslı çıktı</div></div>
+        <div class="stat"><div class="num" data-count="4" data-suffix="+">0+</div><div class="lbl">Hazır & geliştirilen program</div></div>
+        <div class="stat"><div class="num"><span data-count="100" data-suffix="">0</span>%</div><div class="lbl">Mevzuat referanslı çıktı</div></div>
         <div class="stat"><div class="num">KVKK</div><div class="lbl">Yerel & güvenli çalışma</div></div>
       </div>
     </div>
@@ -51,13 +51,13 @@
 <!-- PROGRAMLAR -->
 <section class="block">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow">Programlarımız</span>
       <h2>Özellikli vergi konuları için hazır yazılımlar</h2>
       <p>Her program, mali müşavirlik uygulamasında sık karşılaşılan ve mevzuatı karmaşık olan bir başlık için, gerçek mali tablo dosyaları üzerinde test edilerek geliştirilmiştir.</p>
     </div>
 
-    <div class="grid grid-2">
+    <div class="grid grid-2 reveal">
       {% for p in on_plan %}
       <div class="prog-card">
         <div class="pc-top">
@@ -86,12 +86,12 @@
 <!-- NEDEN BIZ -->
 <section class="block navy">
   <div class="container">
-    <div class="section-head on-navy">
+    <div class="section-head on-navy reveal">
       <span class="eyebrow">Neden Bu Programlar?</span>
       <h2>Mali müşavirlik uzmanlığı, yazılıma dönüştü</h2>
       <p>Özellikli vergi konularındaki yıllara dayalı tecrübe; güvenilir, hatasız ve hızlı bir yazılıma aktarıldı.</p>
     </div>
-    <div class="grid grid-3">
+    <div class="grid grid-3 reveal">
       <div class="feature">
         <div class="f-icon">📚</div>
         <h3>Mevzuat referanslı</h3>
@@ -129,12 +129,12 @@
 <!-- NASIL CALISIR -->
 <section class="block alt">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow">Nasıl Çalışır?</span>
       <h2>Üç adımda hazır çıktı</h2>
       <p>Karmaşık mevzuat hesaplamaları, basit bir akışla otomatikleşir.</p>
     </div>
-    <div class="grid grid-3">
+    <div class="grid grid-3 reveal">
       <div class="step">
         <div class="s-num">1</div>
         <h3>Belgeleri yükle</h3>
@@ -157,7 +157,7 @@
 <!-- ISBIRLIGI / OZEL COZUM -->
 <section class="block">
   <div class="container">
-    <div class="collab">
+    <div class="collab reveal">
       <div class="c-inner">
         <div>
           <span class="hero-badge" style="margin-bottom:16px;">🤝 Size Özel Geliştirme</span>
@@ -182,12 +182,12 @@
 <!-- GELISTIRME ASAMASI -->
 <section class="block alt">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow">Yol Haritası</span>
       <h2>Geliştirme aşamasındaki programlar</h2>
       <p>Yakında yayında olacak yeni hesaplama yazılımları. Haberdar olmak için ücretsiz üye olun.</p>
     </div>
-    <div class="grid grid-3">
+    <div class="grid grid-3 reveal">
       {% for p in gelistirme %}
       <div class="prog-card">
         <div class="pc-top">
