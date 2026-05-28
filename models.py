@@ -158,9 +158,7 @@ class ContactMessage(db.Model):
 
 
 def seed_programs():
-    """Ilk acilis - sabit program kayitlarini ekle (yoksa)."""
-    if Program.query.count() > 0:
-        return
+    """Ilk acilis ve sonraki deploylarda sabit program kayitlarini gunceller."""
     programlar = [
         {
             "slug": "tt-hesap-incelemeleri",
@@ -176,10 +174,10 @@ def seed_programs():
             ),
             "kategori": "Hesap İncelemeleri",
             "mevzuat": "VUK m.280, VUK Mük. m.298/A, 555 sıra No.lu VUK GT",
-            "ucretsiz": True,
-            "fiyat": 0.0,
+            "ucretsiz": False,
+            "fiyat": 2500.0,
             "indirme_dosyasi": "TT_HESAP_INCELEMELERI_v1.0.zip",
-            "durum": "aktif",
+            "durum": "gelistirme",
             "on_plana_cikar": True,
             "ozellikler": [
                 "Mizan + Dövizli Mizan + Bilanço + Gelir Tablosu Excel okuma",
@@ -207,7 +205,7 @@ def seed_programs():
             "ucretsiz": False,
             "fiyat": 2500.0,
             "indirme_dosyasi": "ARGE_INDIRIM_5746_v1.0.zip",
-            "durum": "aktif",
+            "durum": "gelistirme",
             "on_plana_cikar": True,
             "ozellikler": [
                 "Yaygın muhasebe/bordro yazılımı çıktı formatları desteği",
@@ -233,8 +231,8 @@ def seed_programs():
             ),
             "kategori": "KVK",
             "mevzuat": "KVK m.11/1-i, 6322 sayılı Kanun, 3490 sayılı CB Kararı",
-            "ucretsiz": False,
-            "fiyat": 1500.0,
+            "ucretsiz": True,
+            "fiyat": 0.0,
             "indirme_dosyasi": None,
             "durum": "gelistirme",
             "on_plana_cikar": True,
@@ -249,34 +247,43 @@ def seed_programs():
         {
             "slug": "indirimli-kurumlar-vergisi",
             "ad": "İndirimli Kurumlar Vergisi Hesaplama (KVK m.32/A)",
-            "kisa_aciklama": "Yatırım Teşvik Belgesi kapsamındaki indirimli kurumlar vergisi hesaplaması",
+            "kisa_aciklama": "Yatırım Teşvik Belgesi bazında KVK 32/A, YKT ve asgari KV hesaplama",
             "aciklama": (
-                "5520 sayılı KVK m.32/A uyarınca Yatırım Teşvik Belgesi kapsamındaki yatırımdan elde "
-                "edilen kazanca uygulanacak indirimli kurumlar vergisi oranı ve yatırıma katkı tutarı "
-                "hesaplamasını otomatik yapar. Birden fazla teşvik belgesi, devreden katkı tutarı, "
-                "diğer faaliyetlerden elde edilen kazançtan yararlanma seçeneklerini destekler."
+                "5520 sayılı KVK m.32/A kapsamında yatırım teşvik belgeli yatırımlar için yatırıma "
+                "katkı tutarı, indirimli kurumlar vergisi matrahı, yatırım/işletme dönemi ayrımı, "
+                "tevsi yatırım oranlaması, uygun/kapsam dışı harcama ayrımı, devreden katkılar, "
+                "endeksleme ve 2025+ yurt içi asgari kurumlar vergisi etkisini birlikte hesaplar."
             ),
             "kategori": "KVK / Teşvik",
-            "mevzuat": "KVK m.32/A, 2009/15199 sayılı BKK",
+            "mevzuat": "KVK m.32/A, KVK m.32/C, 2012/3305 sayılı Karar",
             "ucretsiz": False,
-            "fiyat": 3000.0,
-            "indirme_dosyasi": None,
+            "fiyat": 19000.0,
+            "indirme_dosyasi": "KVK32A_HESAPLAMA_v1.1.zip",
             "durum": "gelistirme",
             "on_plana_cikar": True,
             "ozellikler": [
-                "Birden fazla teşvik belgesi yönetimi",
-                "Yatırım katkı tutarı / yatırıma katkı oranı / vergi indirim oranı parametreleri",
-                "Diğer faaliyetlerden elde edilen kazançtan yararlanma (CB Kararı oranı)",
-                "Devreden yatırıma katkı tutarı takibi (yeniden değerleme oranı dahil)",
-                "Geçici vergi dönemleri ile dağıtım",
-                "Hesap incelemeleri hazır metin çıktısı",
+                "Uygun harcama ile arsa/arazi, kur farkı, finansman ve kapsam dışı harcama ayrımı",
+                "Yatırım döneminde iki sınır kontrolü: YKT sınırı ve gerçekleşen uygun harcama sınırı",
+                "İşletme döneminde yatırım kazancı ile diğer faaliyet kazancını ayırma",
+                "Tevsi yatırım için sabit kıymet ve hasılat bazlı oranlama seçenekleri",
+                "Devreden yatırıma katkı, endeksleme ve kalan YKT takibi",
+                "2025+ yurt içi asgari kurumlar vergisi etkisi",
+                "PDF/Word beyanname ve teşvik belgesi okuma yardımcıları",
+                "Geliştirme yol haritası: geçici 8 yıl-bazlı otomasyon, çoklu belge dağıtımı, test senaryo kütüphanesi",
             ],
         },
     ]
     for p in programlar:
         ozellikler = p.pop("ozellikler", [])
-        prog = Program(**p)
-        db.session.add(prog)
+        prog = Program.query.filter_by(slug=p["slug"]).first()
+        if prog:
+            for alan, deger in p.items():
+                setattr(prog, alan, deger)
+            ProgramOzellik.query.filter_by(program_id=prog.id).delete()
+        else:
+            prog = Program(**p)
+            db.session.add(prog)
+            db.session.flush()
         db.session.flush()
         for i, o in enumerate(ozellikler):
             db.session.add(ProgramOzellik(program_id=prog.id, metin=o, sira=i))
@@ -359,4 +366,24 @@ def fix_legacy_texts():
     for oz in ProgramOzellik.query.all():
         if any(m in (oz.metin or "").upper() for m in riskli):
             oz.metin = "Yaygın muhasebe/bordro yazılımı çıktı formatları desteği"
+    db.session.commit()
+
+
+def update_program_settings():
+    """Program fiyat / ucret / durum ayarlarini mevcut DB'de gunceller.
+    seed_programs sadece bos DB'de calistigi icin, fiyat degisikliklerinin
+    Render PostgreSQL'e yansimasi bu fonksiyonla saglanir."""
+    ayarlar = {
+        # slug: (ucretsiz, fiyat, durum)  durum: aktif|gelistirme|pasif
+        "tt-hesap-incelemeleri":      (False, 2500.0,  "gelistirme"),
+        "arge-indirim-5746":          (False, 2500.0,  "gelistirme"),
+        "fgk-kvk-11-i":               (True,  0.0,     "gelistirme"),
+        "indirimli-kurumlar-vergisi": (False, 19000.0, "gelistirme"),
+    }
+    for slug, (ucretsiz, fiyat, durum) in ayarlar.items():
+        p = Program.query.filter_by(slug=slug).first()
+        if p:
+            p.ucretsiz = ucretsiz
+            p.fiyat = fiyat
+            p.durum = durum
     db.session.commit()

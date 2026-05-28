@@ -64,9 +64,11 @@
           <div class="pc-icon">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           </div>
-          <span class="badge {% if p.ucretsiz %}badge-free{% elif p.durum=='gelistirme' %}badge-soon{% else %}badge-paid{% endif %}">
-            {% if p.ucretsiz %}Ücretsiz{% elif p.durum=='gelistirme' %}Yakında{% else %}{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺{% endif %}
-          </span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+            {% if p.ucretsiz %}<span class="badge badge-free">Ücretsiz</span>
+            {% else %}<span class="badge badge-paid">{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺ + KDV</span>{% endif %}
+            {% if p.durum == 'gelistirme' %}<span class="badge badge-soon">Yakında</span>{% endif %}
+          </div>
         </div>
         <h3>{{ p.ad }}</h3>
         <p class="pc-desc">{{ p.kisa_aciklama }}</p>
@@ -190,7 +192,11 @@
       <div class="prog-card">
         <div class="pc-top">
           <div class="pc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-          <span class="badge badge-soon">Yakında</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+            {% if p.ucretsiz %}<span class="badge badge-free">Ücretsiz</span>
+            {% else %}<span class="badge badge-paid">{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺ + KDV</span>{% endif %}
+            <span class="badge badge-soon">Yakında</span>
+          </div>
         </div>
         <h3>{{ p.ad }}</h3>
         <p class="pc-desc">{{ p.kisa_aciklama }}</p>

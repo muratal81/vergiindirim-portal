@@ -7,7 +7,7 @@ engine'i dispose ediyoruz; her worker kendi connection'ini kuracak.
 """
 from app import create_app
 from models import (db, ensure_schema, seed_programs, seed_admin,
-                    sync_admin_sifre, fix_legacy_texts)
+                    sync_admin_sifre, fix_legacy_texts, update_program_settings)
 
 app = create_app()
 
@@ -18,6 +18,7 @@ with app.app_context():
     seed_admin()              # Admin yoksa olustur
     sync_admin_sifre()        # Mevcut admin sifresini guncel degerle esitle
     fix_legacy_texts()        # Eski 'Tam Tasdik' metinlerini guncelle
+    update_program_settings() # Program fiyat/ucret/durum ayarlarini guncelle
     db.session.remove()
     # Worker fork'tan once connection'i kapat (multi-worker SSL fix)
     db.engine.dispose()

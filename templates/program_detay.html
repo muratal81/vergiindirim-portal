@@ -39,10 +39,10 @@
       <aside class="detail-side">
         {% if program.ucretsiz %}
           <div class="ds-price free">Ücretsiz</div>
-          <p class="muted" style="font-size:14px;">Hemen indir, ofiste kur, kullan.</p>
+          <p class="muted" style="font-size:14px;">Yayınlandığında ücretsiz indirilebilir.</p>
         {% else %}
-          <div class="ds-price">{{ "{:,.0f}".format(program.fiyat).replace(",", ".") }} ₺</div>
-          <p class="muted" style="font-size:14px;">Tek seferlik lisans · Mevzuat güncellemeleri 1 yıl ücretsiz.</p>
+          <div class="ds-price">{{ "{:,.0f}".format(program.fiyat).replace(",", ".") }} ₺ <span style="font-size:15px;font-weight:500;color:var(--slate-500);">+ KDV</span></div>
+          <p class="muted" style="font-size:14px;">Tek seferlik lisans (1 yıl geçerli) · Mevzuat güncellemeleri dahil.</p>
         {% endif %}
 
         {% if program.durum == 'aktif' %}
