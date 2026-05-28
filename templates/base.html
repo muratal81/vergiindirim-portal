@@ -4,25 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{{ SITE_ADI }}{% endblock %}</title>
-  <meta name="description" content="{{ SITE_ADI }} - {{ SITE_SLOGAN }}. Tam Tasdik, AR-GE İndirim, Finansman Gider Kısıtlaması ve İndirimli Kurumlar Vergisi hesaplama programları.">
+  <meta name="description" content="{% block meta_desc %}{{ SITE_ADI }} — {{ SITE_SLOGAN }}. Tam Tasdik, AR-GE İndirimi, Finansman Gider Kısıtlaması ve İndirimli Kurumlar Vergisi için YMM uzmanlığıyla geliştirilmiş hesaplama yazılımları.{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23102a5c'/><text x='50' y='70' font-size='54' font-family='Arial' font-weight='bold' fill='%23f3d27e' text-anchor='middle'>V</text></svg>">
   {% block head_extra %}{% endblock %}
 </head>
 <body>
 
   <div class="topbar">
-    <div class="container" style="display: flex; justify-content: space-between;">
+    <div class="container">
       <div>
         <span>📞 {{ SITE_TELEFON }}</span>
-        <span style="margin-left: 20px;">✉ {{ SITE_EMAIL }}</span>
+        <span class="sep">✉ {{ SITE_EMAIL }}</span>
       </div>
       <div>
         {% if current_user.is_authenticated %}
-          <a href="{{ url_for('panel') }}">{{ current_user.ad_soyad }} ({{ current_user.unvan }})</a>
-          <a href="{{ url_for('cikis') }}" style="margin-left: 12px;">Çıkış</a>
+          <a href="{{ url_for('panel') }}">👤 {{ current_user.ad_soyad }}</a>
+          <a href="{{ url_for('cikis') }}" class="sep">Çıkış</a>
         {% else %}
           <a href="{{ url_for('giris') }}">Giriş</a>
-          <a href="{{ url_for('kayit') }}" style="margin-left: 12px;">Ücretsiz Kayıt</a>
+          <a href="{{ url_for('kayit') }}" class="sep">Ücretsiz Üyelik</a>
         {% endif %}
       </div>
     </div>
@@ -30,16 +34,18 @@
 
   <header class="navbar">
     <div class="container">
-      <a href="{{ url_for('index') }}" class="logo" style="text-decoration: none;">
-        <div class="logo-mark">MA</div>
+      <a href="{{ url_for('index') }}" class="logo">
+        <div class="logo-mark">Vİ</div>
         <div class="logo-text">
-          <div class="ad">{{ SITE_ADI }}</div>
+          <div class="ad">{{ SITE_KISA }}</div>
           <div class="slogan">{{ SITE_SLOGAN }}</div>
         </div>
       </a>
-      <nav>
+      <button class="mobile-toggle" onclick="document.getElementById('mainnav').classList.toggle('mobile-open')">☰</button>
+      <nav id="mainnav">
         <a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}class="active"{% endif %}>Anasayfa</a>
         <a href="{{ url_for('programlar') }}" {% if request.endpoint in ['programlar','program_detay'] %}class="active"{% endif %}>Programlar</a>
+        <a href="{{ url_for('isbirligi') }}" {% if request.endpoint == 'isbirligi' %}class="active"{% endif %}>Özel Çözüm</a>
         <a href="{{ url_for('hakkimizda') }}" {% if request.endpoint == 'hakkimizda' %}class="active"{% endif %}>Hakkımızda</a>
         <a href="{{ url_for('iletisim') }}" {% if request.endpoint == 'iletisim' %}class="active"{% endif %}>İletişim</a>
         {% if current_user.is_authenticated %}
@@ -53,56 +59,63 @@
 
   {% block hero %}{% endblock %}
 
-  <main>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
     <div class="container">
       <div class="flash-area">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% for category, message in messages %}
-            <div class="flash flash-{{ category }}">{{ message }}</div>
-          {% endfor %}
-        {% endwith %}
-      </div>
-
-      {% block content %}{% endblock %}
-    </div>
-  </main>
-
-  <footer>
-    <div class="container">
-      <div>
-        <h4>{{ SITE_ADI }}</h4>
-        <p style="font-size: 13px; line-height: 1.7;">
-          Vergi indirimleri, indirimli matrah uygulamaları, AR-GE indirimi, Tam Tasdik Raporu ve
-          özellikli vergi konularında <strong>vergi tasarrufu</strong> sağlayan otomatize hesaplama
-          programları geliştirir, mali müşavir ve YMM ofislerine sunar. Programlar mevzuata uyumlu,
-          denetlenebilir ve kaynak izlenebilirligi olan üründür.
-        </p>
-        <p style="font-size: 12px; opacity: 0.8; margin-top: 10px;">
-          Tüm program hakları ve site sahipliği {{ SITE_SAHIBI }}'a aittir.
-        </p>
-      </div>
-      <div>
-        <h4>Hızlı Bağlantılar</h4>
-        <ul>
-          <li><a href="{{ url_for('index') }}">Anasayfa</a></li>
-          <li><a href="{{ url_for('programlar') }}">Programlar</a></li>
-          <li><a href="{{ url_for('hakkimizda') }}">Hakkımızda</a></li>
-          <li><a href="{{ url_for('iletisim') }}">İletişim</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>İletişim</h4>
-        <ul>
-          <li>📍 {{ SITE_ADRES }}</li>
-          <li>📞 {{ SITE_TELEFON }}</li>
-          <li>✉ {{ SITE_EMAIL }}</li>
-        </ul>
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
       </div>
     </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+
+  <footer class="site">
     <div class="container">
+      <div class="f-grid">
+        <div>
+          <div class="f-logo">
+            <div class="logo-mark">Vİ</div>
+            <div class="logo-text">
+              <div class="ad" style="color:#fff;">{{ SITE_KISA }}</div>
+              <div class="slogan" style="color:#93a3c2;">{{ SITE_SLOGAN }}</div>
+            </div>
+          </div>
+          <p class="f-about">
+            Yeminli mali müşavirlik uzmanlığıyla geliştirilmiş; yasal vergi indirimleri ve indirimli
+            matrah konularında mükelleflere zaman kazandıran masaüstü ve web hesaplama yazılımları.
+            Tüm hesaplamalar mevzuat referanslıdır, kaynak izlenebilirliği sağlar.
+          </p>
+        </div>
+        <div>
+          <h4>Programlar</h4>
+          <a href="{{ url_for('program_detay', slug='tt-hesap-incelemeleri') }}">Tam Tasdik – Hesap İncelemeleri</a>
+          <a href="{{ url_for('program_detay', slug='arge-indirim-5746') }}">5746 AR-GE İndirimi</a>
+          <a href="{{ url_for('program_detay', slug='fgk-kvk-11-i') }}">Finansman Gider Kısıtlaması</a>
+          <a href="{{ url_for('program_detay', slug='indirimli-kurumlar-vergisi') }}">İndirimli Kurumlar Vergisi</a>
+          <a href="{{ url_for('programlar') }}">Tüm Programlar →</a>
+        </div>
+        <div>
+          <h4>Kurumsal</h4>
+          <a href="{{ url_for('hakkimizda') }}">Hakkımızda</a>
+          <a href="{{ url_for('isbirligi') }}">Özel Çözüm / İş Birliği</a>
+          <a href="{{ url_for('iletisim') }}">İletişim</a>
+          <a href="{{ url_for('kayit') }}">Ücretsiz Üyelik</a>
+        </div>
+        <div class="f-contact">
+          <h4>İletişim</h4>
+          <div>👤 {{ SITE_SAHIBI }}</div>
+          <div>📞 {{ SITE_TELEFON }}</div>
+          <div>✉ {{ SITE_EMAIL }}</div>
+          <div>📍 {{ SITE_ADRES }}</div>
+        </div>
+      </div>
       <div class="copyright">
-        © {{ YIL }} {{ SITE_ADI }} - Tüm hakları saklıdır. |
-        Mevzuat referans tarihleri ve güncellemeler için programları ofisimizin onayı ile kullanınız.
+        <div>© {{ YIL }} {{ SITE_SAHIBI }} · vergiindirim.com.tr · Tüm hakları saklıdır.</div>
+        <div>Tüm program hakları {{ SITE_SAHIBI }}'a aittir.</div>
       </div>
     </div>
   </footer>

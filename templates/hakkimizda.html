@@ -1,61 +1,80 @@
 {% extends "base.html" %}
-{% block title %}Hakkımızda - {{ SITE_ADI }}{% endblock %}
+{% block title %}Hakkımızda — {{ SITE_ADI }}{% endblock %}
 
 {% block content %}
-<div class="icerik-blok">
-  <h1>Hakkımızda</h1>
-
-  <h2>{{ SITE_ADI }}</h2>
-  <p>
-    Sitemiz; mükelleflerin yasal yollarla vergi yükünü düşüren <strong>vergi indirimleri</strong>,
-    <strong>indirimli matrah uygulamaları</strong>, <strong>istisna ve indirim hesaplamalarını</strong>
-    otomatize eden masaüstü ve web yazılımlarını mali müşavir ve YMM ofislerine sunan bir platformdur.
-  </p>
-  <p>
-    Tüm program hakları ve site sahipliği <strong>{{ SITE_SAHIBI }}</strong> adına kayıtlıdır.
-    İletişim için: <a href="tel:{{ SITE_TELEFON | replace(' ','') }}">{{ SITE_TELEFON }}</a> /
-    <a href="mailto:{{ SITE_EMAIL }}">{{ SITE_EMAIL }}</a>.
-  </p>
-
-  <h2>Programlarımız Neye Yarar?</h2>
-  <p>
-    Türk vergi mevzuatı, mükelleflere pek çok yasal indirim, istisna ve avantaj sunar. Ancak bu
-    avantajların hesaplanması mevzuatın karmaşıklığı nedeniyle uzun ve hataya açıktır. Programlarımız;
-  </p>
-  <ul class="ozellik-list">
-    <li><strong>AR-GE İndirimi:</strong> 5746 sayılı Kanun kapsamında matrahtan düşülecek tutarın hesaplanması</li>
-    <li><strong>İndirimli Kurumlar Vergisi:</strong> KVK m.32/A uyarınca yatırım teşviki kapsamında düşük oranlı vergi</li>
-    <li><strong>Finansman Gider Kısıtlaması:</strong> KVK m.11/1-i kapsamında KKEG'in doğru hesaplanması</li>
-    <li><strong>KKM İstisnası:</strong> KVK Geçici m.14 kapsamında kur korumalı mevduat kazanç istisnası</li>
-    <li><strong>Tam Tasdik Raporu - Hesap İncelemeleri:</strong> Mizan + Beyanname → Word çıktısı</li>
-    <li><strong>Enflasyon Düzeltmesi:</strong> VUK Mük. m.298/A kapsamı kontrol</li>
-  </ul>
-
-  <h2>Yaklaşımımız</h2>
-  <p>
-    Programlarımız <strong>"veri uydurmaz"</strong> ilkesiyle çalışır. Her tutar mizan, muavin,
-    beyanname veya çalışma kağıdı satırına bağlanır. Eksik veri varsa metin üretimi durdurulur,
-    eksik belge listesi kullanıcıya gösterilir. Bu yaklaşım, YMM mesleki sorumluluk sigortası ve
-    denetim süreçlerinde rapor savunulabilirliğini garanti altına alır.
-  </p>
-
-  <h2>Veri Güvenliği</h2>
-  <p>
-    Programlarımız <strong>yerel</strong> olarak ofisinizdeki bilgisayarda çalışır. Mükellef
-    verisi (mizan, beyanname, muavin, ad-soyad, vergi no) buluta gönderilmez. Bu yaklaşım 6698
-    sayılı Kişisel Verilerin Korunması Kanunu (KVKK) uyumu açısından da gerekli olan yöntemdir.
-  </p>
-
-  <h2>Geliştirme Yol Haritası</h2>
-  <ul class="ozellik-list">
-    <li>Tam Tasdik Raporu - Hesap İncelemeleri (yayında, ücretsiz)</li>
-    <li>5746 Sayılı Kanun AR-GE İndirim Hesaplama (yayında)</li>
-    <li>Finansman Gider Kısıtlaması (KVK m.11/1-i) - geliştirme aşamasında</li>
-    <li>İndirimli Kurumlar Vergisi (KVK m.32/A) - geliştirme aşamasında</li>
-    <li>KKM İstisnası (KVK Geçici m.14) - planlanan</li>
-    <li>Enflasyon Düzeltmesi Otomasyonu - planlanan</li>
-    <li>İştirak Kazançları İstisnası (KVK m.5/1-a) - planlanan</li>
-    <li>Taşınmaz/İştirak Satış Kazancı İstisnası (KVK m.5/1-e) - planlanan</li>
-  </ul>
+<div class="page-head">
+  <div class="container">
+    <div class="breadcrumb"><a href="{{ url_for('index') }}">Anasayfa</a> / Hakkımızda</div>
+    <h1>Hakkımızda</h1>
+    <p>YMM uzmanlığını, mükelleflere zaman kazandıran güvenilir yazılımlara dönüştürüyoruz.</p>
+  </div>
 </div>
+
+<section class="block">
+  <div class="container">
+    <div style="max-width:820px;margin:0 auto;">
+      <p style="font-size:18px;color:var(--slate-700);">
+        <strong>{{ SITE_ADI }}</strong>; mükelleflerin yasal yollarla vergi yükünü düşüren
+        <strong>vergi indirimleri</strong>, <strong>indirimli matrah uygulamaları</strong> ve
+        <strong>istisna/indirim hesaplamalarını</strong> otomatize eden masaüstü ve web yazılımlarını
+        mali müşavir, YMM ve mükelleflere sunan bir platformdur.
+      </p>
+      <p style="color:var(--slate-600);">
+        Tüm program hakları ve site sahipliği <strong>{{ SITE_SAHIBI }}</strong> adına kayıtlıdır.
+        İletişim: <a href="tel:{{ SITE_TELEFON | replace(' ','') }}">{{ SITE_TELEFON }}</a> ·
+        <a href="mailto:{{ SITE_EMAIL }}">{{ SITE_EMAIL }}</a>
+      </p>
+    </div>
+
+    <div class="grid grid-3" style="margin:56px 0;">
+      <div class="feature">
+        <div class="f-icon">🎯</div>
+        <h3>Misyonumuz</h3>
+        <p>Mevzuatı karmaşık olan özellikli vergi konularını, hatasız ve hızlı şekilde hesaplayan; YMM tasdik kalitesinde çıktı üreten araçlar geliştirmek.</p>
+      </div>
+      <div class="feature">
+        <div class="f-icon">🛡️</div>
+        <h3>"Veri Uydurmaz" İlkesi</h3>
+        <p>Her tutar mizan/muavin/beyanname satırına bağlanır. Eksik veride metin üretimi durur, eksik belge listesi çıkarılır.</p>
+      </div>
+      <div class="feature">
+        <div class="f-icon">🔐</div>
+        <h3>Veri Güvenliği</h3>
+        <p>Masaüstü sürüm yerel çalışır; mükellef verisi buluta gönderilmez. 6698 KVKK uyumu için tercih edilen yöntemdir.</p>
+      </div>
+    </div>
+
+    <div style="max-width:820px;margin:0 auto;">
+      <h2 style="font-size:26px;margin-bottom:16px;">Programlarımız neye yarar?</h2>
+      <p style="color:var(--slate-600);margin-bottom:18px;">Türk vergi mevzuatı pek çok yasal indirim, istisna ve avantaj sunar; ancak hesaplaması uzun ve hataya açıktır. Yazılımlarımız bu yükü kaldırır:</p>
+      <ul class="feat-list">
+        <li><strong>AR-GE İndirimi (5746 SK):</strong> Matrahtan düşülecek tutarın hesaplanması</li>
+        <li><strong>İndirimli Kurumlar Vergisi (KVK m.32/A):</strong> Yatırım teşviki kapsamında düşük oranlı vergi</li>
+        <li><strong>Finansman Gider Kısıtlaması (KVK m.11/1-i):</strong> KKEG'in doğru hesaplanması</li>
+        <li><strong>KKM İstisnası (KVK Geçici m.14):</strong> Kur korumalı mevduat kazanç istisnası</li>
+        <li><strong>Tam Tasdik – Hesap İncelemeleri:</strong> Mizan + Beyanname → Word çıktısı</li>
+        <li><strong>Enflasyon Düzeltmesi (VUK Mük. m.298/A):</strong> Kapsam kontrolü</li>
+      </ul>
+
+      <h2 style="font-size:26px;margin:36px 0 16px;">Yol Haritası</h2>
+      <ul class="feat-list">
+        <li>Tam Tasdik – Hesap İncelemeleri <strong>(yayında, ücretsiz)</strong></li>
+        <li>5746 AR-GE İndirim Hesaplama <strong>(yayında)</strong></li>
+        <li>Finansman Gider Kısıtlaması (KVK m.11/1-i) — geliştiriliyor</li>
+        <li>İndirimli Kurumlar Vergisi (KVK m.32/A) — geliştiriliyor</li>
+        <li>KKM İstisnası, Enflasyon Düzeltmesi, İştirak Kazançları İstisnası — planlanan</li>
+      </ul>
+    </div>
+
+    <div class="collab" style="margin-top:56px;">
+      <div class="c-inner">
+        <div>
+          <h2>İhtiyacınız listede yok mu?</h2>
+          <p>Size özel hesaplama yazılımını iş birliğiyle birlikte geliştirelim — ofisinizin formatına ve akışına göre.</p>
+        </div>
+        <div class="c-cta"><a href="{{ url_for('isbirligi') }}" class="btn btn-gold btn-block btn-lg">Özel Çözüm İste</a></div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

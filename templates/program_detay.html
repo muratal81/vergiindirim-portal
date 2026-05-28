@@ -1,87 +1,85 @@
 {% extends "base.html" %}
-{% block title %}{{ program.ad }} - {{ SITE_ADI }}{% endblock %}
+{% block title %}{{ program.ad }} — {{ SITE_ADI }}{% endblock %}
 
-{% block hero %}
-<section class="detay-header">
+{% block content %}
+<div class="page-head">
   <div class="container">
-    <div>
-      <span class="kategori-bilgi">{{ program.kategori }}</span>
-      <h1>{{ program.ad }}</h1>
-      <p style="font-size: 16px; opacity: 0.9;">{{ program.kisa_aciklama }}</p>
-      {% if program.mevzuat %}
-        <div class="mevzuat"><strong>Mevzuat Dayanağı:</strong> {{ program.mevzuat }}</div>
-      {% endif %}
-    </div>
-    <div class="fiyat-kutu">
-      {% if program.ucretsiz %}
-        <div class="fiyat-buyuk" style="color: #6ed4a1;">Ücretsiz</div>
-        <div class="fiyat-bilgi">Hemen indir, ofiste kur, kullan.</div>
-      {% else %}
-        <div class="fiyat-buyuk">{{ "{:,.0f}".format(program.fiyat).replace(",", ".") }} ₺</div>
-        <div class="fiyat-bilgi">Tek seferlik lisans bedeli.<br>Mevzuat güncellemeleri 1 yıl ücretsiz.</div>
-      {% endif %}
+    <div class="breadcrumb"><a href="{{ url_for('index') }}">Anasayfa</a> / <a href="{{ url_for('programlar') }}">Programlar</a> / {{ program.kategori }}</div>
+    <h1>{{ program.ad }}</h1>
+    <p>{{ program.kisa_aciklama }}</p>
+  </div>
+</div>
 
-      {% if program.durum == 'aktif' %}
-        {% if current_user.is_authenticated %}
-          <a href="{{ url_for('indir', slug=program.slug) }}" class="btn btn-primary btn-block" style="margin-top: 16px;">
-            {% if program.ucretsiz %}İndir{% else %}Satın Al ve İndir{% endif %}
-          </a>
-        {% else %}
-          <a href="{{ url_for('giris', next=url_for('program_detay', slug=program.slug)) }}" class="btn btn-primary btn-block" style="margin-top: 16px;">
-            Giriş Yap ve İndir
-          </a>
+<section class="block">
+  <div class="container">
+    <div class="detail-grid">
+      <!-- ANA -->
+      <div class="detail-main">
+        <h2 style="margin-top:0;">Program Hakkında</h2>
+        <p>{{ program.aciklama }}</p>
+
+        {% if ozellikler %}
+        <h2>Özellikler</h2>
+        <ul class="feat-list">
+          {% for o in ozellikler %}<li>{{ o.metin }}</li>{% endfor %}
+        </ul>
         {% endif %}
-      {% else %}
-        <div class="durum-badge gelistirme" style="margin-top: 16px;">Geliştirme Aşamasında</div>
-        <p style="font-size: 12px; opacity: 0.8; margin-top: 10px;">Yayınlandığında haberdar olmak için ücretsiz kayıt olabilirsiniz.</p>
-      {% endif %}
+
+        <h2>Sistem Gereksinimleri</h2>
+        <ul class="feat-list">
+          <li>Windows 10 / 11 (macOS & Linux Python ile çalışır)</li>
+          <li>Python 3.11 veya üzeri</li>
+          <li>Microsoft Excel (mizan/bilanço dosyaları için)</li>
+          <li>Microsoft Word (çıktıların görüntülenmesi için)</li>
+          <li>İnternet yalnızca ilk kurulumda (Python paketleri için)</li>
+        </ul>
+      </div>
+
+      <!-- YAN -->
+      <aside class="detail-side">
+        {% if program.ucretsiz %}
+          <div class="ds-price free">Ücretsiz</div>
+          <p class="muted" style="font-size:14px;">Hemen indir, ofiste kur, kullan.</p>
+        {% else %}
+          <div class="ds-price">{{ "{:,.0f}".format(program.fiyat).replace(",", ".") }} ₺</div>
+          <p class="muted" style="font-size:14px;">Tek seferlik lisans · Mevzuat güncellemeleri 1 yıl ücretsiz.</p>
+        {% endif %}
+
+        {% if program.durum == 'aktif' %}
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('indir', slug=program.slug) }}" class="btn btn-gold btn-block btn-lg" style="margin-top:16px;">
+              ⬇ {% if program.ucretsiz %}Hemen İndir{% else %}Satın Al ve İndir{% endif %}
+            </a>
+          {% else %}
+            <a href="{{ url_for('giris', next=url_for('program_detay', slug=program.slug)) }}" class="btn btn-gold btn-block btn-lg" style="margin-top:16px;">
+              Giriş Yap ve İndir
+            </a>
+            <p class="muted" style="font-size:13px;text-align:center;margin-top:10px;">
+              Üye değil misiniz? <a href="{{ url_for('kayit') }}">Ücretsiz üye olun</a>
+            </p>
+          {% endif %}
+        {% else %}
+          <div class="badge badge-soon" style="margin-top:16px;display:inline-block;">Geliştirme Aşamasında</div>
+          <p class="muted" style="font-size:13px;margin-top:10px;">Yayınlandığında haberdar olmak için ücretsiz üye olabilir veya özel çözüm talep edebilirsiniz.</p>
+          <a href="{{ url_for('isbirligi') }}" class="btn btn-outline btn-block" style="margin-top:12px;">Özel Çözüm İste</a>
+        {% endif %}
+
+        <div class="ds-meta">
+          <div><strong>Kategori:</strong> {{ program.kategori }}</div>
+          <div><strong>Sürüm:</strong> {{ program.versiyon }}</div>
+          <div><strong>Lisans:</strong> {% if program.ucretsiz %}Ücretsiz{% else %}Ticari{% endif %}</div>
+          <div><strong>İndirme:</strong> {{ program.indirme_sayisi or 0 }}</div>
+          {% if program.mevzuat %}<div><strong>Mevzuat:</strong> {{ program.mevzuat }}</div>{% endif %}
+        </div>
+
+        <div style="background:var(--navy-800);color:#fff;border-radius:12px;padding:18px;">
+          <strong style="color:var(--gold-300);font-size:14px;">Destek Hattı</strong>
+          <p style="font-size:13px;color:#c7d2e8;margin:8px 0;">Sorular ve kurum içi eğitim talepleri için:</p>
+          <div style="font-size:14px;">📞 {{ SITE_TELEFON }}</div>
+          <div style="font-size:14px;">✉ {{ SITE_EMAIL }}</div>
+        </div>
+      </aside>
     </div>
   </div>
 </section>
-{% endblock %}
-
-{% block content %}
-<div class="detay-body" style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px;">
-  <div>
-    <h2>Program Hakkında</h2>
-    <p>{{ program.aciklama }}</p>
-
-    {% if ozellikler %}
-    <h2 style="margin-top: 32px;">Özellikler</h2>
-    <ul class="ozellik-list">
-      {% for o in ozellikler %}
-        <li>{{ o.metin }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
-
-    <h2 style="margin-top: 32px;">Sistem Gereksinimleri</h2>
-    <ul class="ozellik-list">
-      <li>Windows 10 / 11 (macOS ve Linux Python ile çalışır)</li>
-      <li>Python 3.11 veya üzeri</li>
-      <li>Microsoft Excel veya Excel uyumlu yazılım (mizan/bilanço dosyaları için)</li>
-      <li>Microsoft Word veya Word uyumlu yazılım (çıktıların görüntülenmesi için)</li>
-      <li>İnternet bağlantısı yalnız ilk kurulumda (Python paketleri için)</li>
-    </ul>
-  </div>
-
-  <aside>
-    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 24px;">
-      <h3 style="color: var(--primary); margin-bottom: 16px; font-size: 16px;">Hızlı Bilgi</h3>
-      <table style="width: 100%; font-size: 14px;">
-        <tr><td style="padding: 6px 0; color: var(--text-light);">Kategori:</td><td style="padding: 6px 0; text-align: right;">{{ program.kategori }}</td></tr>
-        <tr><td style="padding: 6px 0; color: var(--text-light);">Sürüm:</td><td style="padding: 6px 0; text-align: right;">{{ program.versiyon }}</td></tr>
-        <tr><td style="padding: 6px 0; color: var(--text-light);">Lisans:</td><td style="padding: 6px 0; text-align: right;">{% if program.ucretsiz %}Ücretsiz{% else %}Ticari{% endif %}</td></tr>
-        <tr><td style="padding: 6px 0; color: var(--text-light);">İndirme Sayısı:</td><td style="padding: 6px 0; text-align: right;">{{ program.indirme_sayisi or 0 }}</td></tr>
-      </table>
-    </div>
-
-    <div style="background: var(--primary); color: #fff; border-radius: 8px; padding: 24px; margin-top: 16px;">
-      <h3 style="color: var(--accent); margin-bottom: 12px; font-size: 15px;">Destek Hattı</h3>
-      <p style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Programa ilişkin sorularınız ve kurum içi eğitim talepleriniz için bizimle iletişime geçin.</p>
-      <p style="font-size: 14px; margin-top: 8px;">📞 {{ SITE_TELEFON }}</p>
-      <p style="font-size: 14px;">✉ {{ SITE_EMAIL }}</p>
-    </div>
-  </aside>
-</div>
 {% endblock %}

@@ -1,47 +1,89 @@
 {% extends "base.html" %}
-{% block title %}İletişim - {{ SITE_ADI }}{% endblock %}
+{% block title %}İletişim — {{ SITE_ADI }}{% endblock %}
 
 {% block content %}
-<div class="icerik-blok">
-  <h1>İletişim</h1>
-  <p>Programlarımız hakkında sorularınız, kurum içi eğitim talepleri, özel ihtiyaca yönelik geliştirme ve mali müşavirlik/tam tasdik hizmetleri için bizimle iletişime geçebilirsiniz.</p>
+<div class="page-head">
+  <div class="container">
+    <div class="breadcrumb"><a href="{{ url_for('index') }}">Anasayfa</a> / İletişim</div>
+    <h1>İletişim</h1>
+    <p>Programlar hakkında sorular, kurum içi eğitim talepleri ve özel geliştirme için bize ulaşın.</p>
+  </div>
+</div>
 
-  <div class="iletisim-grid">
-    <div class="ic">
-      <h4>📞 Telefon</h4>
-      <p><a href="tel:{{ SITE_TELEFON | replace(' ','') }}">{{ SITE_TELEFON }}</a></p>
-    </div>
-    <div class="ic">
-      <h4>✉ E-posta</h4>
-      <p><a href="mailto:{{ SITE_EMAIL }}">{{ SITE_EMAIL }}</a></p>
-    </div>
-    <div class="ic">
-      <h4>👤 Sahibi</h4>
-      <p>{{ SITE_SAHIBI }}</p>
+<section class="block">
+  <div class="container">
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap:48px; align-items:start;">
+      <!-- Sol: bilgi + SSS -->
+      <div>
+        <div class="grid grid-3" style="gap:14px;margin-bottom:32px;">
+          <div style="background:var(--slate-50);border:1px solid var(--slate-200);border-radius:12px;padding:18px;text-align:center;">
+            <div style="font-size:24px;">📞</div>
+            <div style="font-size:12px;color:var(--slate-500);margin:4px 0;">Telefon</div>
+            <a href="tel:{{ SITE_TELEFON | replace(' ','') }}" style="font-weight:600;font-size:13.5px;">{{ SITE_TELEFON }}</a>
+          </div>
+          <div style="background:var(--slate-50);border:1px solid var(--slate-200);border-radius:12px;padding:18px;text-align:center;">
+            <div style="font-size:24px;">✉</div>
+            <div style="font-size:12px;color:var(--slate-500);margin:4px 0;">E-posta</div>
+            <a href="mailto:{{ SITE_EMAIL }}" style="font-weight:600;font-size:12.5px;word-break:break-all;">{{ SITE_EMAIL }}</a>
+          </div>
+          <div style="background:var(--slate-50);border:1px solid var(--slate-200);border-radius:12px;padding:18px;text-align:center;">
+            <div style="font-size:24px;">👤</div>
+            <div style="font-size:12px;color:var(--slate-500);margin:4px 0;">Yetkili</div>
+            <span style="font-weight:600;font-size:13.5px;">{{ SITE_SAHIBI }}</span>
+          </div>
+        </div>
+
+        <h2 style="font-size:22px;margin-bottom:16px;">Sıkça Sorulan Sorular</h2>
+        <div class="feat-list" style="list-style:none;">
+          <div style="padding:14px 0;border-bottom:1px solid var(--slate-100);">
+            <strong style="color:var(--navy-800);">Programları nasıl indirebilirim?</strong>
+            <p class="muted" style="font-size:14px;margin-top:5px;">Ücretsiz programlar üyelik sonrası doğrudan indirilir. Ücretli programlarda ödeme teyidiyle indirme aktifleşir.</p>
+          </div>
+          <div style="padding:14px 0;border-bottom:1px solid var(--slate-100);">
+            <strong style="color:var(--navy-800);">Mevzuat değişikliğinde güncellenir mi?</strong>
+            <p class="muted" style="font-size:14px;margin-top:5px;">Evet. Ücretli programlarda 1 yıl ücretsiz mevzuat güncellemesi. Yeni Tebliğ/Kanun değişikliğinde kural ve şablonlar güncellenir.</p>
+          </div>
+          <div style="padding:14px 0;border-bottom:1px solid var(--slate-100);">
+            <strong style="color:var(--navy-800);">Mükellef verilerim güvenli mi?</strong>
+            <p class="muted" style="font-size:14px;margin-top:5px;">Masaüstü sürüm yerel çalışır; veri buluta gönderilmez. 6698 sayılı KVKK uyumu açısından tercih edilen yöntemdir.</p>
+          </div>
+          <div style="padding:14px 0;">
+            <strong style="color:var(--navy-800);">Özel geliştirme yapılır mı?</strong>
+            <p class="muted" style="font-size:14px;margin-top:5px;">Evet. <a href="{{ url_for('isbirligi') }}">Özel Çözüm</a> sayfasından ihtiyacınızı iletin; iş birliğiyle birlikte geliştirelim.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sag: iletisim formu -->
+      <div class="form-card">
+        <h2 style="font-size:22px;margin-bottom:6px;">Bize Yazın</h2>
+        <p class="muted" style="margin-bottom:22px;font-size:14.5px;">Mesajınızı bırakın, en kısa sürede dönüş yapalım.</p>
+        <form method="post" action="{{ url_for('iletisim') }}">
+          <div class="field">
+            <label>Ad Soyad *</label>
+            <input type="text" name="ad_soyad" value="{{ form.ad_soyad or '' }}" required>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>E-posta *</label>
+              <input type="email" name="email" value="{{ form.email or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Telefon</label>
+              <input type="text" name="telefon" value="{{ form.telefon or '' }}">
+            </div>
+          </div>
+          <div class="field">
+            <label>Mesajınız *</label>
+            <textarea name="mesaj" required>{{ form.mesaj or '' }}</textarea>
+          </div>
+          <button type="submit" class="btn btn-gold btn-block btn-lg">Mesajı Gönder →</button>
+        </form>
+        <p class="muted" style="font-size:12.5px;margin-top:14px;text-align:center;">
+          Mesai: Pzt–Cuma 09:00–18:00
+        </p>
+      </div>
     </div>
   </div>
-
-  <h2>Mesai Saatleri</h2>
-  <p>
-    Pazartesi - Cuma: 09:00 - 18:00<br>
-    Cumartesi - Pazar: Kapalı (Aciliyetler için e-posta ile iletişime geçiniz)
-  </p>
-
-  <h2>Sıkça Sorulan Sorular</h2>
-
-  <h3 style="font-size: 15px; color: var(--primary); margin: 16px 0 6px;">Programları nasıl indirebilirim?</h3>
-  <p>Ücretsiz programlar üyelik oluşturduktan sonra doğrudan "İndir" butonu ile indirilebilir. Ücretli programlar için satın alma işleminin ardından ödemenin teyit edilmesiyle indirme aktifleşir.</p>
-
-  <h3 style="font-size: 15px; color: var(--primary); margin: 16px 0 6px;">Programlar mevzuat değişikliklerinde güncellenir mi?</h3>
-  <p>Evet. Ücretli programlarımız için 1 yıllık ücretsiz mevzuat güncellemesi sunulur. Yeni Tebliğ, Sirküler veya Kanun değişikliği yayınlandığında ilgili kural ve şablonlar güncellenir; üyelerimize e-posta ile bildirilir.</p>
-
-  <h3 style="font-size: 15px; color: var(--primary); margin: 16px 0 6px;">Mükellef verilerimiz güvenli mi?</h3>
-  <p>Programlarımız <strong>yerel</strong> olarak çalışır. Mizan, beyanname ve mükellef verisi sunucumuza/buluta gönderilmez. Tüm hesaplama ofisinizdeki bilgisayarda yapılır. Bu yaklaşım 6698 sayılı KVKK uyumu açısından da tercih edilen yöntemdir.</p>
-
-  <h3 style="font-size: 15px; color: var(--primary); margin: 16px 0 6px;">Özel ihtiyaca yönelik geliştirme yapılır mı?</h3>
-  <p>Evet. Ofisinizin özel mizan formatı, yerel muhasebe yazılımı çıktıları veya özelleşmiş hesaplama ihtiyaçları için ayrı geliştirme yapılabilir. İletişime geçiniz.</p>
-
-  <h3 style="font-size: 15px; color: var(--primary); margin: 16px 0 6px;">Fatura kesilir mi?</h3>
-  <p>Evet. Satın aldığınız programlar için resmi fatura kesilir; talep edilirse e-arşiv fatura olarak iletilir.</p>
-</div>
+</section>
 {% endblock %}

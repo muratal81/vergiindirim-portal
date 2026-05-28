@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Özel Çözüm & İş Birliği — {{ SITE_ADI }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div class="container">
+    <div class="breadcrumb"><a href="{{ url_for('index') }}">Anasayfa</a> / Özel Çözüm</div>
+    <h1>İhtiyacınıza Özel Çözüm Birlikte Geliştirilir</h1>
+    <p>Ofisinizin tekrar eden hesaplamaları, kendine has mizan/format yapısı veya mevzuatın yeni bir başlığı için size özel yazılım. İş birliği modeliyle, birlikte tasarlayalım.</p>
+  </div>
+</div>
+
+<section class="block">
+  <div class="container">
+    <div class="grid grid-3" style="margin-bottom:64px;">
+      <div class="feature">
+        <div class="f-icon">🧭</div>
+        <h3>1. İhtiyacı Anlıyoruz</h3>
+        <p>Hesaplamanızı, kullandığınız belgeleri ve beklediğiniz çıktıyı birlikte netleştiririz. Mevzuat dayanağını çıkarırız.</p>
+      </div>
+      <div class="feature">
+        <div class="f-icon">⚙️</div>
+        <h3>2. Birlikte Geliştiriyoruz</h3>
+        <p>Prototip üzerinde sizinle ilerleriz. Mizan/beyanname formatınıza, ofis akışınıza göre özelleştirilir.</p>
+      </div>
+      <div class="feature">
+        <div class="f-icon">✅</div>
+        <h3>3. Teslim & Destek</h3>
+        <p>Test edilmiş, mevzuat referanslı program teslim edilir. Mevzuat değişikliklerinde güncelleme desteği sağlanır.</p>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap:48px; align-items:start;">
+      <!-- Sol: aciklama -->
+      <div>
+        <span class="eyebrow" style="color:var(--gold-500);font-weight:700;font-size:13.5px;letter-spacing:.08em;text-transform:uppercase;">Neler Yapabiliriz?</span>
+        <h2 style="font-size:30px;margin:14px 0 18px;">Hangi konularda program geliştirilebilir?</h2>
+        <ul class="feat-list">
+          <li>Özellikli vergi konuları (istisna, indirim, KKEG hesaplamaları)</li>
+          <li>Tam tasdik / KDV iade raporlarının otomatik metin üretimi</li>
+          <li>Mizan, muavin, beyanname ve çalışma kâğıdı çapraz mutabakat araçları</li>
+          <li>Bordro / muhtasar / SGK çıktılarından otomatik teşvik hesaplama</li>
+          <li>Ofisinizin tekrar eden Excel hesaplamalarının otomasyonu</li>
+          <li>Mevcut programlarımızın firmanıza özel uyarlanması</li>
+          <li>Web tabanlı (çok kullanıcılı) veya masaüstü (çevrimdışı) sürümler</li>
+        </ul>
+        <div style="background:var(--gold-soft);border-radius:14px;padding:22px;margin-top:24px;">
+          <strong style="color:var(--navy-800);">💡 İş Birliği Modeli</strong>
+          <p style="color:var(--slate-700);font-size:14.5px;margin-top:6px;">
+            Programı tek seferlik geliştirme ya da gelir paylaşımlı iş birliği şeklinde
+            yürütebiliriz. Ortak geliştirdiğimiz program, dileyseniz bu platformda satışa da sunulabilir.
+          </p>
+        </div>
+      </div>
+
+      <!-- Sag: form -->
+      <div class="form-card">
+        <h2 style="font-size:22px;margin-bottom:6px;">Özel Çözüm Talep Formu</h2>
+        <p class="muted" style="margin-bottom:22px;font-size:14.5px;">Formu doldurun, ihtiyacınızı değerlendirip size dönelim.</p>
+        <form method="post" action="{{ url_for('isbirligi') }}">
+          <div class="field-row">
+            <div class="field">
+              <label>Ad Soyad *</label>
+              <input type="text" name="ad_soyad" value="{{ form.ad_soyad or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Unvan</label>
+              <select name="unvan">
+                <option value="SMMM" {% if form.unvan=='SMMM' %}selected{% endif %}>SMMM</option>
+                <option value="YMM" {% if form.unvan=='YMM' %}selected{% endif %}>YMM</option>
+                <option value="Mükellef" {% if form.unvan=='Mükellef' %}selected{% endif %}>Mükellef / Firma</option>
+                <option value="Diğer" {% if form.unvan=='Diğer' %}selected{% endif %}>Diğer</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>E-posta *</label>
+              <input type="email" name="email" value="{{ form.email or '' }}" required>
+            </div>
+            <div class="field">
+              <label>Telefon</label>
+              <input type="text" name="telefon" value="{{ form.telefon or '' }}">
+            </div>
+          </div>
+          <div class="field">
+            <label>Şirket / Ofis</label>
+            <input type="text" name="sirket" value="{{ form.sirket or '' }}">
+          </div>
+          <div class="field">
+            <label>İhtiyaç Konusu *</label>
+            <input type="text" name="konu" placeholder="Örn: KDV iade raporu otomasyonu" value="{{ form.konu or '' }}" required>
+          </div>
+          <div class="field">
+            <label>İhtiyacınızı Anlatın *</label>
+            <textarea name="detay" placeholder="Hangi hesaplamayı, hangi belgelerden, nasıl bir çıktıyla istediğinizi yazın..." required>{{ form.detay or '' }}</textarea>
+          </div>
+          <div class="field">
+            <label>Tahmini Bütçe (opsiyonel)</label>
+            <select name="butce">
+              <option value="">Belirtmek istemiyorum</option>
+              <option value="0-5000">5.000 ₺ altı</option>
+              <option value="5000-15000">5.000 – 15.000 ₺</option>
+              <option value="15000-50000">15.000 – 50.000 ₺</option>
+              <option value="50000+">50.000 ₺ üzeri</option>
+              <option value="gelir-paylasimi">Gelir paylaşımlı iş birliği</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-gold btn-block btn-lg">Talebi Gönder →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -88,6 +88,34 @@ class Order(db.Model):
     tarih = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class CollabRequest(db.Model):
+    """Ozel cozum / is birligi talebi (musteri kendi ihtiyacini anlatir)."""
+    __tablename__ = "collab_requests"
+    id = db.Column(db.Integer, primary_key=True)
+    ad_soyad = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    telefon = db.Column(db.String(30))
+    unvan = db.Column(db.String(60))      # SMMM, YMM, Mukellef, Diger
+    sirket = db.Column(db.String(200))
+    konu = db.Column(db.String(200))       # ihtiyac basligi
+    detay = db.Column(db.Text)             # ihtiyac aciklamasi
+    butce = db.Column(db.String(60))       # tahmini butce araligi
+    durum = db.Column(db.String(20), default="yeni")  # yeni, gorusuldu, kapandi
+    tarih = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class ContactMessage(db.Model):
+    """Iletisim formu mesaji."""
+    __tablename__ = "contact_messages"
+    id = db.Column(db.Integer, primary_key=True)
+    ad_soyad = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    telefon = db.Column(db.String(30))
+    mesaj = db.Column(db.Text)
+    durum = db.Column(db.String(20), default="yeni")
+    tarih = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 def seed_programs():
     """Ilk acilis - sabit program kayitlarini ekle (yoksa)."""
     if Program.query.count() > 0:

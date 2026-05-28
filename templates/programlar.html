@@ -1,51 +1,61 @@
 {% extends "base.html" %}
-{% block title %}Programlar - {{ SITE_ADI }}{% endblock %}
+{% block title %}Programlar — {{ SITE_ADI }}{% endblock %}
 
 {% block content %}
-<div class="section-title">
-  <span class="ust-yazi">Tüm Programlar</span>
-  <h2>Vergi Hesaplama ve Tam Tasdik Yazılımları</h2>
-  <p>Yeminli Mali Müşavirlik uygulamasında özellikli vergi konularını otomatize eden masaüstü/web programları.</p>
+<div class="page-head">
+  <div class="container">
+    <div class="breadcrumb"><a href="{{ url_for('index') }}">Anasayfa</a> / Programlar</div>
+    <h1>Vergi Hesaplama Programları</h1>
+    <p>Özellikli vergi konuları için YMM uzmanlığıyla geliştirilmiş, mevzuat referanslı yazılımlar.</p>
+  </div>
 </div>
 
-{% if kategoriler %}
-<div style="text-align: center; margin-bottom: 30px;">
-  <a href="{{ url_for('programlar') }}" class="btn btn-sm {% if not secili_kategori %}btn-primary{% else %}btn-dark{% endif %}">Tümü</a>
-  {% for k in kategoriler %}
-    <a href="{{ url_for('programlar', kategori=k) }}" class="btn btn-sm {% if secili_kategori == k %}btn-primary{% else %}btn-dark{% endif %}" style="margin-left: 6px;">{{ k }}</a>
-  {% endfor %}
-</div>
-{% endif %}
-
-<div class="kart-grid">
-  {% for p in programlar %}
-  <div class="kart">
-    <span class="kategori">{{ p.kategori }}</span>
-    <h3>{{ p.ad }}</h3>
-    <p class="kart-ozet">{{ p.kisa_aciklama }}</p>
-    {% if p.mevzuat %}
-      <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">
-        <strong>Mevzuat:</strong> {{ p.mevzuat }}
-      </p>
+<section class="block">
+  <div class="container">
+    {% if kategoriler %}
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px;">
+      <a href="{{ url_for('programlar') }}" class="btn {% if not secili_kategori %}btn-navy{% else %}btn-outline{% endif %}" style="padding:9px 18px;font-size:14px;">Tümü</a>
+      {% for k in kategoriler %}
+      <a href="{{ url_for('programlar', kategori=k) }}" class="btn {% if secili_kategori==k %}btn-navy{% else %}btn-outline{% endif %}" style="padding:9px 18px;font-size:14px;">{{ k }}</a>
+      {% endfor %}
+    </div>
     {% endif %}
-    <div class="kart-alt">
-      <div>
-        {% if p.ucretsiz %}
-          <span class="fiyat ucretsiz">Ücretsiz</span>
-        {% else %}
-          <span class="fiyat">{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺</span>
-        {% endif %}
-        {% if p.durum == 'gelistirme' %}
-          <span class="durum-badge gelistirme">Yakında</span>
-        {% else %}
-          <span class="durum-badge aktif">Hazır</span>
-        {% endif %}
+
+    <div class="grid grid-3">
+      {% for p in programlar %}
+      <div class="prog-card">
+        <div class="pc-top">
+          <div class="pc-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <span class="badge {% if p.ucretsiz %}badge-free{% elif p.durum=='gelistirme' %}badge-soon{% else %}badge-paid{% endif %}">
+            {% if p.ucretsiz %}Ücretsiz{% elif p.durum=='gelistirme' %}Yakında{% else %}{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺{% endif %}
+          </span>
+        </div>
+        <h3>{{ p.ad }}</h3>
+        <p class="pc-desc">{{ p.kisa_aciklama }}</p>
+        {% if p.mevzuat %}<div class="pc-meta">📑 {{ p.mevzuat }}</div>{% endif %}
+        <div class="pc-foot">
+          <span class="badge badge-cat">{{ p.kategori }}</span>
+          <a href="{{ url_for('program_detay', slug=p.slug) }}" class="btn btn-outline" style="padding:9px 18px;font-size:14px;">İncele →</a>
+        </div>
       </div>
-      <a href="{{ url_for('program_detay', slug=p.slug) }}" class="btn btn-dark btn-sm">Detay</a>
+      {% else %}
+      <p style="grid-column:1/-1;text-align:center;color:var(--slate-500);">Bu kategoride henüz program bulunmamaktadır.</p>
+      {% endfor %}
+    </div>
+
+    <div class="collab" style="margin-top:56px;">
+      <div class="c-inner">
+        <div>
+          <h2>Aradığınız programı bulamadınız mı?</h2>
+          <p>İhtiyacınıza özel hesaplama yazılımını iş birliğiyle birlikte geliştirelim.</p>
+        </div>
+        <div class="c-cta">
+          <a href="{{ url_for('isbirligi') }}" class="btn btn-gold btn-block btn-lg">Özel Çözüm İste</a>
+        </div>
+      </div>
     </div>
   </div>
-  {% else %}
-    <p style="text-align: center; color: var(--text-light); grid-column: 1/-1;">Bu kategoride henüz program bulunmamaktadır.</p>
-  {% endfor %}
-</div>
+</section>
 {% endblock %}

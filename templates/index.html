@@ -1,19 +1,36 @@
 {% extends "base.html" %}
-{% block title %}{{ SITE_ADI }} - Vergi Hesaplama ve Tam Tasdik Programları{% endblock %}
+{% block title %}{{ SITE_ADI }} — Vergi Hesaplama, AR-GE İndirimi ve Tam Tasdik Yazılımları{% endblock %}
 
 {% block hero %}
 <section class="hero">
   <div class="container">
-    <h1>Vergi <span class="vurgu">İndirim</span> ve İndirimli Matrah Programları</h1>
-    <p>
-      Mükellefinizin <strong>matrahını yasal yollardan düşüren</strong> tüm vergi avantajlarını
-      otomatik hesaplayan masaüstü ve web programları: AR-GE İndirimi, İndirimli Kurumlar Vergisi,
-      Finansman Gider Kısıtlaması, KKM İstisnası, Tam Tasdik Raporu. Mevzuata uyumlu, denetlenebilir,
-      ofiste yerel çalışır.
-    </p>
-    <div class="btn-grup">
-      <a href="{{ url_for('programlar') }}" class="btn btn-primary">Programları İncele</a>
-      <a href="{{ url_for('iletisim') }}" class="btn btn-outline">İletişime Geçin</a>
+    <div class="hero-text">
+      <span class="hero-badge">⚖ YMM Uzmanlığıyla Geliştirildi</span>
+      <h1>Vergi yükünü <span class="accent">yasal yollarla</span> düşüren hesaplama yazılımları</h1>
+      <p class="lead">
+        AR-GE indirimi, indirimli kurumlar vergisi, finansman gider kısıtlaması ve tam tasdik raporu…
+        Mevzuatı karmaşık olan özellikli vergi konularını <strong style="color:#fff;">dakikalar içinde,
+        mevzuat referanslı ve denetlenebilir</strong> şekilde hesaplayın.
+      </p>
+      <div class="hero-cta">
+        <a href="{{ url_for('programlar') }}" class="btn btn-gold btn-lg">Programları Keşfet →</a>
+        <a href="{{ url_for('isbirligi') }}" class="btn btn-ghost btn-lg">Özel Çözüm İste</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="num">4+</div><div class="lbl">Hazır & geliştirilen program</div></div>
+        <div class="stat"><div class="num">%100</div><div class="lbl">Mevzuat referanslı çıktı</div></div>
+        <div class="stat"><div class="num">KVKK</div><div class="lbl">Yerel & güvenli çalışma</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="hc-title"><span class="hc-dot"></span> Tam Tasdik — Hesap İncelemeleri</div>
+        <div class="hc-row"><span>100 Kasa (dövizli)</span><span>131.799,12-TL <span class="ok">✓</span></span></div>
+        <div class="hc-row"><span>102 Bankalar</span><span>4.475.282.073,72-TL <span class="ok">✓</span></span></div>
+        <div class="hc-row"><span>Finansman Gider Kıs. (KKEG)</span><span>143.323.521,41-TL <span class="ok">✓</span></span></div>
+        <div class="hc-row"><span>Mizan ↔ Beyanname mutabakat</span><span class="ok">Mutabık ✓</span></div>
+        <div class="hc-row"><span>Word çıktısı</span><span class="ok">Hazır ✓</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -21,69 +38,171 @@
 
 {% block content %}
 
-<!-- OZELLIKLER -->
-<div class="feature-row">
-  <div class="feature">
-    <div class="icon">✓</div>
-    <h4>Mevzuat Referanslı</h4>
-    <p>Her hesaplama VUK, KVK, GVK, 5746, 7440, MSUGT gibi yürürlükteki ilgili mevzuata atıfla üretilir. Çıktılarda referans korunur.</p>
-  </div>
-  <div class="feature">
-    <div class="icon">§</div>
-    <h4>Denetlenebilir İzlenebilirlik</h4>
-    <p>Her tutar mizan/muavin/beyanname satırına bağlanır. YMM tasdikinde kullanılabilir; denetim izi her zaman erişilebilir.</p>
-  </div>
-  <div class="feature">
-    <div class="icon">🔒</div>
-    <h4>Yerel Çalışma - KVKK</h4>
-    <p>Programlar mükellef verisini buluta göndermez. Tüm hesaplama ofisinizdeki bilgisayarda yapılır.</p>
+<!-- TRUST BAR -->
+<div class="trustbar">
+  <div class="container">
+    <div class="ti">⚖ <span>Mevzuat referanslı (VUK, KVK, GVK, 5746, 7440)</span></div>
+    <div class="ti">🔍 <span>Kaynak izlenebilirliği & denetim izi</span></div>
+    <div class="ti">🔒 <span>KVKK uyumlu, yerel çalışma</span></div>
+    <div class="ti">📄 <span>Word / Excel hazır çıktı</span></div>
   </div>
 </div>
 
-<!-- ONE CIKAN PROGRAMLAR -->
-<div class="section-title">
-  <span class="ust-yazi">Programlarımız</span>
-  <h2>Vergi Hesaplama Yazılımları</h2>
-  <p>Her bir program, Yeminli Mali Müşavirlik uygulamasında karşılaşılan ve mevzuatı karmaşık olan özel başlıklar için geliştirilmiştir.</p>
-</div>
+<!-- PROGRAMLAR -->
+<section class="block">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Programlarımız</span>
+      <h2>Özellikli vergi konuları için hazır yazılımlar</h2>
+      <p>Her program, YMM/SMMM uygulamasında sık karşılaşılan ve mevzuatı karmaşık olan bir başlık için, gerçek tam tasdik dosyaları üzerinde test edilerek geliştirilmiştir.</p>
+    </div>
 
-<div class="kart-grid">
-  {% for p in on_plan %}
-  <div class="kart">
-    <span class="kategori">{{ p.kategori }}</span>
-    <h3>{{ p.ad }}</h3>
-    <p class="kart-ozet">{{ p.kisa_aciklama }}</p>
-    <div class="kart-alt">
-      <div>
-        {% if p.ucretsiz %}
-          <span class="fiyat ucretsiz">Ücretsiz</span>
-        {% else %}
-          <span class="fiyat">{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺</span>
-        {% endif %}
-        {% if p.durum == 'gelistirme' %}
-          <span class="durum-badge gelistirme">Yakında</span>
-        {% else %}
-          <span class="durum-badge aktif">Hazır</span>
-        {% endif %}
+    <div class="grid grid-2">
+      {% for p in on_plan %}
+      <div class="prog-card">
+        <div class="pc-top">
+          <div class="pc-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <span class="badge {% if p.ucretsiz %}badge-free{% elif p.durum=='gelistirme' %}badge-soon{% else %}badge-paid{% endif %}">
+            {% if p.ucretsiz %}Ücretsiz{% elif p.durum=='gelistirme' %}Yakında{% else %}{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺{% endif %}
+          </span>
+        </div>
+        <h3>{{ p.ad }}</h3>
+        <p class="pc-desc">{{ p.kisa_aciklama }}</p>
+        <div class="pc-meta">📑 {{ p.mevzuat }}</div>
+        <div class="pc-foot">
+          <span class="badge badge-cat">{{ p.kategori }}</span>
+          <a href="{{ url_for('program_detay', slug=p.slug) }}" class="btn btn-outline" style="padding:9px 18px;font-size:14px;">İncele →</a>
+        </div>
       </div>
-      <a href="{{ url_for('program_detay', slug=p.slug) }}" class="btn btn-dark btn-sm">Detay</a>
+      {% endfor %}
     </div>
   </div>
-  {% endfor %}
-</div>
+</section>
 
-<!-- TANITICI METIN -->
-<div style="background: #fff; border-radius: 8px; padding: 36px; margin: 50px 0; border: 1px solid var(--border);">
-  <div class="section-title" style="margin-bottom: 20px;">
-    <span class="ust-yazi">Neden Bu Programlar?</span>
-    <h2>YMM Uzmanlığı Yazılıma Dönüştü</h2>
+<!-- NEDEN BIZ -->
+<section class="block navy">
+  <div class="container">
+    <div class="section-head on-navy">
+      <span class="eyebrow">Neden Bu Programlar?</span>
+      <h2>YMM uzmanlığı, yazılıma dönüştü</h2>
+      <p>Özellikli vergi konularındaki yıllara dayalı tecrübe; güvenilir, hatasız ve hızlı bir yazılıma aktarıldı.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="feature">
+        <div class="f-icon">📚</div>
+        <h3>Mevzuat referanslı</h3>
+        <p>Her hesaplama VUK, KVK, GVK, 5746, 7440 ve MSUGT gibi yürürlükteki mevzuata atıfla üretilir. Çıktıda referanslar korunur.</p>
+      </div>
+      <div class="feature">
+        <div class="f-icon">🔍</div>
+        <h3>Denetlenebilir</h3>
+        <p>Her tutar mizan, muavin veya beyanname satırına bağlanır. YMM tasdikinde kullanılabilir; denetim izi her zaman erişilebilir.</p>
+      </div>
+      <div class="feature">
+        <div class="f-icon">🔒</div>
+        <h3>KVKK & yerel çalışma</h3>
+        <p>Masaüstü sürüm mükellef verisini buluta göndermez. Tüm hesaplama ofisinizdeki bilgisayarda yapılır.</p>
+      </div>
+      <div class="feature">
+        <div class="f-icon">🚫</div>
+        <h3>Veri uydurmaz</h3>
+        <p>Eksik veride metin üretmez; eksik belge listesi çıkarır. YMM/SMMM onayı olmadan nihai çıktı vermez.</p>
+      </div>
+      <div class="feature">
+        <div class="f-icon">⚡</div>
+        <h3>Dakikalar içinde</h3>
+        <p>Saatlerce süren manuel hesaplamalar ve metin yazımı; mizan ve beyannameyi yükleyince dakikalara iner.</p>
+      </div>
+      <div class="feature">
+        <div class="f-icon">🔄</div>
+        <h3>Sürekli güncel</h3>
+        <p>Mevzuat değişikliklerinde tek noktadan güncelleme yapılır. Önceki dönem çıktıları kendi sürümüyle saklanır.</p>
+      </div>
+    </div>
   </div>
-  <p style="text-align: center; max-width: 800px; margin: 0 auto; color: var(--text-light); font-size: 15px;">
-    {{ SITE_ADI }} olarak özellikli vergi konularındaki yıllara dayalı tecrübemizi yazılıma
-    aktardık. Programlarımız tam tasdik raporu üslubunda otomatik metin üretir, mizan-beyanname
-    mutabakatını çapraz kontrol eder, eksik veri durumunda metin uydurmaz ve YMM/SMMM onayı
-    olmadan nihai çıktı vermez. Mevzuat değişikliklerinde tek noktadan güncelleme yapılır.
-  </p>
-</div>
+</section>
+
+<!-- NASIL CALISIR -->
+<section class="block alt">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Nasıl Çalışır?</span>
+      <h2>Üç adımda hazır çıktı</h2>
+      <p>Karmaşık mevzuat hesaplamaları, basit bir akışla otomatikleşir.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="step">
+        <div class="s-num">1</div>
+        <h3>Belgeleri yükle</h3>
+        <p>Mizan (Excel), Kurumlar Vergisi Beyannamesi (PDF), muavin ve çalışma kâğıtlarını programa yükleyin.</p>
+      </div>
+      <div class="step">
+        <div class="s-num">2</div>
+        <h3>Program hesaplasın</h3>
+        <p>Mevzuat kuralları uygulanır, mizan-beyanname çapraz mutabakatı yapılır, eksik veri varsa uyarı verilir.</p>
+      </div>
+      <div class="step">
+        <div class="s-num">3</div>
+        <h3>Word / Excel indir</h3>
+        <p>Tam tasdik raporu üslubunda metin ve tablolar; mevzuat referanslı, denetlenebilir çıktı olarak hazır.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ISBIRLIGI / OZEL COZUM -->
+<section class="block">
+  <div class="container">
+    <div class="collab">
+      <div class="c-inner">
+        <div>
+          <span class="hero-badge" style="margin-bottom:16px;">🤝 Size Özel Geliştirme</span>
+          <h2>İhtiyacınıza özel program birlikte geliştirilir</h2>
+          <p>
+            Ofisinizin tekrar eden bir hesaplaması, kendine has bir mizan formatı ya da mevzuatın
+            yeni bir başlığı mı var? İhtiyacınızı anlatın; <strong style="color:#fff;">iş birliği
+            modeliyle</strong> size özel hesaplama yazılımını birlikte tasarlayıp geliştirelim.
+            Mevcut programlar da talebinize göre özelleştirilebilir.
+          </p>
+        </div>
+        <div class="c-cta">
+          <a href="{{ url_for('isbirligi') }}" class="btn btn-gold btn-block btn-lg">Özel Çözüm Talep Et</a>
+          <a href="{{ url_for('iletisim') }}" class="btn btn-ghost btn-block">İletişime Geç</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if gelistirme %}
+<!-- GELISTIRME ASAMASI -->
+<section class="block alt">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Yol Haritası</span>
+      <h2>Geliştirme aşamasındaki programlar</h2>
+      <p>Yakında yayında olacak yeni hesaplama yazılımları. Haberdar olmak için ücretsiz üye olun.</p>
+    </div>
+    <div class="grid grid-3">
+      {% for p in gelistirme %}
+      <div class="prog-card">
+        <div class="pc-top">
+          <div class="pc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <span class="badge badge-soon">Yakında</span>
+        </div>
+        <h3>{{ p.ad }}</h3>
+        <p class="pc-desc">{{ p.kisa_aciklama }}</p>
+        <div class="pc-foot">
+          <span class="badge badge-cat">{{ p.kategori }}</span>
+          <a href="{{ url_for('program_detay', slug=p.slug) }}" class="btn btn-outline" style="padding:9px 18px;font-size:14px;">Detay →</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
 {% endblock %}

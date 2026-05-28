@@ -1,57 +1,61 @@
 {% extends "base.html" %}
-{% block title %}Ücretsiz Kayıt - {{ SITE_ADI }}{% endblock %}
+{% block title %}Ücretsiz Üyelik — {{ SITE_ADI }}{% endblock %}
 
 {% block content %}
-<div class="form-kart" style="max-width: 560px;">
-  <h1>Ücretsiz Üyelik Oluştur</h1>
-  <p style="text-align: center; color: var(--text-light); font-size: 13px; margin-bottom: 20px;">
-    Ücretsiz programlarımızı indirmek ve ücretli programları satın almak için kayıt olun.
-  </p>
-  <form method="POST" action="{{ url_for('kayit') }}">
-    <div class="form-row">
-      <div class="form-group">
-        <label for="ad_soyad">Ad Soyad *</label>
-        <input type="text" name="ad_soyad" id="ad_soyad" value="{{ form.ad_soyad or '' }}" required>
-      </div>
-      <div class="form-group">
-        <label for="unvan">Ünvanınız *</label>
-        <select name="unvan" id="unvan">
-          <option value="SMMM" {% if form.unvan == 'SMMM' %}selected{% endif %}>Serbest Muhasebeci Mali Müşavir</option>
-          <option value="YMM" {% if form.unvan == 'YMM' %}selected{% endif %}>Yeminli Mali Müşavir</option>
-          <option value="Stajyer" {% if form.unvan == 'Stajyer' %}selected{% endif %}>Stajyer / Aday</option>
-          <option value="Mali İşler" {% if form.unvan == 'Mali İşler' %}selected{% endif %}>Mali İşler / Muhasebe</option>
-          <option value="Diger" {% if form.unvan == 'Diger' %}selected{% endif %}>Diğer</option>
-        </select>
-      </div>
+<section class="block alt">
+  <div class="container">
+    <div class="form-card" style="max-width:560px;margin:0 auto;">
+      <h1 style="font-size:26px;text-align:center;margin-bottom:6px;">Ücretsiz Üyelik Oluştur</h1>
+      <p class="muted center" style="margin-bottom:26px;font-size:14.5px;">
+        Ücretsiz programları indirmek ve ücretli programları edinmek için üye olun.
+      </p>
+      <form method="POST" action="{{ url_for('kayit') }}">
+        <div class="field-row">
+          <div class="field">
+            <label for="ad_soyad">Ad Soyad *</label>
+            <input type="text" name="ad_soyad" id="ad_soyad" value="{{ form.ad_soyad or '' }}" required>
+          </div>
+          <div class="field">
+            <label for="unvan">Ünvanınız *</label>
+            <select name="unvan" id="unvan">
+              <option value="SMMM" {% if form.unvan=='SMMM' %}selected{% endif %}>Serbest Muhasebeci Mali Müşavir</option>
+              <option value="YMM" {% if form.unvan=='YMM' %}selected{% endif %}>Yeminli Mali Müşavir</option>
+              <option value="Stajyer" {% if form.unvan=='Stajyer' %}selected{% endif %}>Stajyer / Aday</option>
+              <option value="Mali İşler" {% if form.unvan=='Mali İşler' %}selected{% endif %}>Mali İşler / Muhasebe</option>
+              <option value="Diğer" {% if form.unvan=='Diğer' %}selected{% endif %}>Diğer</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="email">E-posta Adresi *</label>
+          <input type="email" name="email" id="email" value="{{ form.email or '' }}" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="telefon">Telefon</label>
+            <input type="tel" name="telefon" id="telefon" value="{{ form.telefon or '' }}">
+          </div>
+          <div class="field">
+            <label for="sirket">Şirket / Ofis</label>
+            <input type="text" name="sirket" id="sirket" value="{{ form.sirket or '' }}">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="sifre">Şifre *</label>
+            <input type="password" name="sifre" id="sifre" required minlength="6">
+          </div>
+          <div class="field">
+            <label for="sifre2">Şifre (Tekrar) *</label>
+            <input type="password" name="sifre2" id="sifre2" required minlength="6">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-gold btn-block btn-lg">Üyeliği Tamamla →</button>
+      </form>
+      <p class="muted center" style="margin-top:20px;font-size:14px;">
+        Zaten üye misiniz? <a href="{{ url_for('giris') }}"><strong>Giriş yapın</strong></a>
+      </p>
     </div>
-    <div class="form-group">
-      <label for="email">E-posta Adresi *</label>
-      <input type="email" name="email" id="email" value="{{ form.email or '' }}" required>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label for="telefon">Telefon</label>
-        <input type="tel" name="telefon" id="telefon" value="{{ form.telefon or '' }}">
-      </div>
-      <div class="form-group">
-        <label for="sirket">Şirket / Ofis Adı</label>
-        <input type="text" name="sirket" id="sirket" value="{{ form.sirket or '' }}">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label for="sifre">Şifre *</label>
-        <input type="password" name="sifre" id="sifre" required minlength="6">
-      </div>
-      <div class="form-group">
-        <label for="sifre2">Şifre (Tekrar) *</label>
-        <input type="password" name="sifre2" id="sifre2" required minlength="6">
-      </div>
-    </div>
-    <button type="submit" class="btn btn-primary btn-block">Üyeliği Tamamla</button>
-  </form>
-  <div class="form-alt-text">
-    Zaten üyeyseniz <a href="{{ url_for('giris') }}">Giriş Yapın</a>
   </div>
-</div>
+</section>
 {% endblock %}

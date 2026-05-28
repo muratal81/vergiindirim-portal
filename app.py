@@ -19,7 +19,8 @@ from flask_login import (LoginManager, login_user, logout_user, login_required,
                          current_user)
 
 from config import Config, DOWNLOADS_DIR
-from models import db, User, Program, ProgramOzellik, Download, Order, seed_programs, seed_admin
+from models import (db, User, Program, ProgramOzellik, Download, Order,
+                    CollabRequest, ContactMessage, seed_programs, seed_admin)
 
 
 def create_app() -> Flask:
@@ -125,9 +126,49 @@ def create_app() -> Flask:
     def hakkimizda():
         return render_template("hakkimizda.html")
 
-    @app.route("/iletisim")
+    @app.route("/iletisim", methods=["GET", "POST"])
     def iletisim():
-        return render_template("iletisim.html")
+        if request.method == "POST":
+            ad = request.form.get("ad_soyad", "").strip()
+            email = request.form.get("email", "").strip()
+            tel = request.form.get("telefon", "").strip()
+            mesaj = request.form.get("mesaj", "").strip()
+            if not (ad and email and mesaj):
+                flash("Ad-soyad, e-posta ve mesaj alanları zorunludur.", "danger")
+                return render_template("iletisim.html", form=request.form)
+            m = ContactMessage(ad_soyad=ad, email=email, telefon=tel, mesaj=mesaj)
+            db.session.add(m)
+            db.session.commit()
+            flash("Mesajınız alındı. En kısa sürede dönüş yapılacaktır.", "success")
+            return redirect(url_for("iletisim"))
+        return render_template("iletisim.html", form={})
+
+    @app.route("/isbirligi", methods=["GET", "POST"])
+    def isbirligi():
+        if request.method == "POST":
+            ad = request.form.get("ad_soyad", "").strip()
+            email = request.form.get("email", "").strip()
+            tel = request.form.get("telefon", "").strip()
+            unvan = request.form.get("unvan", "").strip()
+            sirket = request.form.get("sirket", "").strip()
+            konu = request.form.get("konu", "").strip()
+            detay = request.form.get("detay", "").strip()
+            butce = request.form.get("butce", "").strip()
+            if not (ad and email and konu and detay):
+                flash("Ad-soyad, e-posta, konu ve ihtiyaç açıklaması zorunludur.", "danger")
+                return render_template("isbirligi.html", form=request.form)
+            talep = CollabRequest(
+                ad_soyad=ad, email=email, telefon=tel, unvan=unvan,
+                sirket=sirket, konu=konu, detay=detay, butce=butce,
+            )
+            db.session.add(talep)
+            db.session.commit()
+            flash(
+                "Talebiniz alındı. İhtiyacınızı değerlendirip en kısa sürede sizinle iletişime "
+                "geçeceğiz. İlginiz için teşekkürler.", "success"
+            )
+            return redirect(url_for("isbirligi"))
+        return render_template("isbirligi.html", form={})
 
     # ------------------ AUTH ----------------------
     @app.route("/giris", methods=["GET", "POST"])
