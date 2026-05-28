@@ -207,7 +207,7 @@ def seed_programs():
             "durum": "aktif",
             "on_plana_cikar": True,
             "ozellikler": [
-                "KORMAS, GREEN, ISIK bordro formatları desteği",
+                "Yaygın muhasebe/bordro yazılımı çıktı formatları desteği",
                 "Muhtasar beyanname ile gelir vergisi stopaj indirimi mutabakatı",
                 "SGK işveren primi indirimi (yarısı Hazine, %50)",
                 "Damga vergisi istisnası",
@@ -328,4 +328,10 @@ def fix_legacy_texts():
     # Kategorisi 'Tam Tasdik' olan tum kayitlari guncelle
     for prog in Program.query.filter_by(kategori="Tam Tasdik").all():
         prog.kategori = "Hesap İncelemeleri"
+    # Marka ismi gecen ozellikleri temizle (telif/marka riski)
+    riskli = ["KORMAS", "GREEN", "ISIK", "IŞIK", "LUCA", "LOGO", "MIKRO",
+              "NETSIS", "ZIRVE", "VEGA", "YAYLA", "AGRO"]
+    for oz in ProgramOzellik.query.all():
+        if any(m in (oz.metin or "").upper() for m in riskli):
+            oz.metin = "Yaygın muhasebe/bordro yazılımı çıktı formatları desteği"
     db.session.commit()
