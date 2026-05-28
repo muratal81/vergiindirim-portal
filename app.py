@@ -58,6 +58,18 @@ def create_app() -> Flask:
     def load_user(user_id):
         return User.query.get(int(user_id))
 
+    # .com -> .com.tr 301 yonlendirme (kullanici .com yazinca .com.tr acilir)
+    @app.before_request
+    def _com_to_comtr():
+        host = (request.host or "").lower().split(":")[0]
+        if host in ("vergiindirim.com", "www.vergiindirim.com"):
+            hedef = "https://vergiindirim.com.tr" + request.full_path.rstrip("?")
+            return redirect(hedef, code=301)
+        # www.com.tr -> com.tr (tutarlilik)
+        if host == "www.vergiindirim.com.tr":
+            hedef = "https://vergiindirim.com.tr" + request.full_path.rstrip("?")
+            return redirect(hedef, code=301)
+
     # Sablon icine her route'da gonderilecek config bilgileri
     @app.context_processor
     def inject_globals():
