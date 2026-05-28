@@ -32,27 +32,31 @@
         </div>
 
         <div class="form-card">
-          <h2 style="font-size:20px;margin-bottom:18px;">Siparişlerim</h2>
-          {% if siparisler %}
+          <h2 style="font-size:20px;margin-bottom:18px;">Lisanslarım</h2>
+          {% if lisanslar %}
           <table class="tbl">
-            <thead><tr><th>Program</th><th>Tutar</th><th>Durum</th><th>Tarih</th></tr></thead>
+            <thead><tr><th>Program</th><th>Lisans Anahtarı</th><th>Durum</th><th>Bitiş</th></tr></thead>
             <tbody>
-              {% for s in siparisler %}
+              {% for l in lisanslar %}
               <tr>
-                <td>#{{ s.program_id }}</td>
-                <td>{{ "{:,.0f}".format(s.tutar or 0).replace(",", ".") }} ₺</td>
+                <td>{{ prog_map[l.program_id].ad if l.program_id in prog_map else l.program_id }}</td>
+                <td>{% if l.anahtar %}<code style="font-size:12.5px;">{{ l.anahtar }}</code>{% else %}<span class="muted">—</span>{% endif %}</td>
                 <td>
-                  {% if s.durum=='odendi' %}<span class="badge badge-free">Ödendi</span>
-                  {% elif s.durum=='bekliyor' %}<span class="badge badge-soon">Ödeme Bekliyor</span>
-                  {% else %}{{ s.durum }}{% endif %}
+                  {% if l.durum=='aktif' and l.gecerli_mi %}<span class="badge badge-free">Aktif ({{ l.kalan_gun }} gün)</span>
+                  {% elif l.durum=='bekliyor' %}<span class="badge badge-soon">Onay Bekliyor</span>
+                  {% elif l.durum=='suresi_doldu' %}<span class="badge badge-soon">Süresi Doldu</span>
+                  {% else %}<span class="badge badge-soon">{{ l.durum }}</span>{% endif %}
                 </td>
-                <td>{{ s.tarih.strftime('%d.%m.%Y') }}</td>
+                <td>{{ l.bitis.strftime('%d.%m.%Y') if l.bitis else '-' }}</td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
+          <p class="muted" style="font-size:12.5px;margin-top:12px;">
+            Lisans anahtarınızı programın ilk açılışında girerek 1 yıl boyunca kullanabilirsiniz.
+          </p>
           {% else %}
-          <p class="muted">Henüz siparişiniz bulunmamaktadır.</p>
+          <p class="muted">Henüz lisansınız bulunmamaktadır. Ücretli programlar için lisans talep edebilirsiniz.</p>
           {% endif %}
         </div>
       </div>

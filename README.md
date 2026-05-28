@@ -4,7 +4,7 @@
 
 ## İçerik
 
-- **Tam Tasdik Raporu - Hesap İncelemeleri** otomasyonu (Mizan + Beyanname → Word)
+- **Hesap İncelemeleri Otomasyonu** (Mizan + Beyanname → Word)
 - **5746 sayılı Kanun AR-GE İndirim** hesaplama
 - **Finansman Gider Kısıtlaması** (KVK m.11/1-i)
 - **İndirimli Kurumlar Vergisi** (KVK m.32/A)

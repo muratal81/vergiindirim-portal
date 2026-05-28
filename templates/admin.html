@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Yönetim Paneli — {{ SITE_ADI }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div class="container">
+    <div class="breadcrumb"><a href="{{ url_for('index') }}">Anasayfa</a> / Yönetim</div>
+    <h1>Yönetim Paneli</h1>
+    <p>Lisans talepleri, özel çözüm talepleri, iletişim mesajları ve kullanıcılar.</p>
+  </div>
+</div>
+
+<section class="block">
+  <div class="container">
+
+    <!-- ISTATISTIK -->
+    <div class="grid grid-4" style="margin-bottom:48px;">
+      <div class="prog-card" style="text-align:center;"><div class="ds-price" style="font-size:30px;">{{ istatistik.kullanici }}</div><div class="muted">Kullanıcı</div></div>
+      <div class="prog-card" style="text-align:center;"><div class="ds-price" style="font-size:30px;">{{ istatistik.indirme }}</div><div class="muted">İndirme</div></div>
+      <div class="prog-card" style="text-align:center;"><div class="ds-price" style="font-size:30px;color:var(--warning);">{{ istatistik.bekleyen_lisans }}</div><div class="muted">Bekleyen Lisans</div></div>
+      <div class="prog-card" style="text-align:center;"><div class="ds-price" style="font-size:30px;color:var(--success);">{{ istatistik.aktif_lisans }}</div><div class="muted">Aktif Lisans</div></div>
+    </div>
+
+    <!-- BEKLEYEN LISANS TALEPLERI -->
+    <h2 style="font-size:22px;margin-bottom:16px;">⏳ Bekleyen Lisans Talepleri</h2>
+    {% if bekleyen_lisans %}
+    <table class="tbl" style="margin-bottom:40px;">
+      <thead><tr><th>Kullanıcı</th><th>Program</th><th>Talep Tarihi</th><th>İşlem</th></tr></thead>
+      <tbody>
+        {% for l in bekleyen_lisans %}
+        <tr>
+          <td>{{ l.user.ad_soyad }}<br><small class="muted">{{ l.user.email }} · {{ l.user.telefon or '-' }}</small></td>
+          <td>{{ prog_map[l.program_id].ad if l.program_id in prog_map else l.program_id }}</td>
+          <td>{{ l.talep_tarihi.strftime('%d.%m.%Y %H:%M') }}</td>
+          <td>
+            <a href="{{ url_for('admin_lisans_onayla', lid=l.id) }}" class="btn btn-gold" style="padding:7px 14px;font-size:13px;">✓ Onayla (1 yıl)</a>
+            <a href="{{ url_for('admin_lisans_iptal', lid=l.id) }}" class="btn btn-outline" style="padding:7px 14px;font-size:13px;">İptal</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}<p class="muted" style="margin-bottom:40px;">Bekleyen lisans talebi yok.</p>{% endif %}
+
+    <!-- AKTIF LISANSLAR -->
+    <h2 style="font-size:22px;margin-bottom:16px;">🔑 Aktif Lisanslar</h2>
+    {% if aktif_lisans %}
+    <table class="tbl" style="margin-bottom:40px;">
+      <thead><tr><th>Anahtar</th><th>Kullanıcı</th><th>Program</th><th>Bitiş</th><th>Kalan</th><th></th></tr></thead>
+      <tbody>
+        {% for l in aktif_lisans %}
+        <tr>
+          <td><code>{{ l.anahtar }}</code></td>
+          <td>{{ l.user.ad_soyad }}</td>
+          <td>{{ prog_map[l.program_id].ad if l.program_id in prog_map else l.program_id }}</td>
+          <td>{{ l.bitis.strftime('%d.%m.%Y') if l.bitis else '-' }}</td>
+          <td>{% if l.kalan_gun > 30 %}<span class="badge badge-free">{{ l.kalan_gun }} gün</span>{% else %}<span class="badge badge-soon">{{ l.kalan_gun }} gün</span>{% endif %}</td>
+          <td><a href="{{ url_for('admin_lisans_iptal', lid=l.id) }}" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">İptal</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}<p class="muted" style="margin-bottom:40px;">Aktif lisans yok.</p>{% endif %}
+
+    <!-- OZEL COZUM TALEPLERI -->
+    <h2 style="font-size:22px;margin-bottom:16px;">🤝 Özel Çözüm / İş Birliği Talepleri</h2>
+    {% if talepler %}
+    <table class="tbl" style="margin-bottom:40px;">
+      <thead><tr><th>İletişim</th><th>Konu / İhtiyaç</th><th>Bütçe</th><th>Tarih</th><th>Durum</th></tr></thead>
+      <tbody>
+        {% for t in talepler %}
+        <tr>
+          <td>{{ t.ad_soyad }} ({{ t.unvan }})<br><small class="muted">{{ t.email }} · {{ t.telefon or '-' }}{% if t.sirket %} · {{ t.sirket }}{% endif %}</small></td>
+          <td><strong>{{ t.konu }}</strong><br><small class="muted">{{ t.detay[:160] }}{% if t.detay|length > 160 %}…{% endif %}</small></td>
+          <td>{{ t.butce or '-' }}</td>
+          <td>{{ t.tarih.strftime('%d.%m.%Y') }}</td>
+          <td>
+            {% if t.durum == 'yeni' %}<span class="badge badge-soon">Yeni</span>
+              <a href="{{ url_for('admin_talep_kapat', tid=t.id) }}" class="btn btn-outline" style="padding:5px 10px;font-size:11px;margin-top:4px;">Görüşüldü</a>
+            {% else %}<span class="badge badge-free">{{ t.durum }}</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}<p class="muted" style="margin-bottom:40px;">Henüz özel çözüm talebi yok.</p>{% endif %}
+
+    <!-- ILETISIM MESAJLARI -->
+    <h2 style="font-size:22px;margin-bottom:16px;">✉ İletişim Mesajları</h2>
+    {% if mesajlar %}
+    <table class="tbl" style="margin-bottom:40px;">
+      <thead><tr><th>Gönderen</th><th>Mesaj</th><th>Tarih</th><th>Durum</th></tr></thead>
+      <tbody>
+        {% for m in mesajlar %}
+        <tr>
+          <td>{{ m.ad_soyad }}<br><small class="muted">{{ m.email }} · {{ m.telefon or '-' }}</small></td>
+          <td><small>{{ m.mesaj[:200] }}{% if m.mesaj|length > 200 %}…{% endif %}</small></td>
+          <td>{{ m.tarih.strftime('%d.%m.%Y') }}</td>
+          <td>
+            {% if m.durum == 'yeni' %}<span class="badge badge-soon">Yeni</span>
+              <a href="{{ url_for('admin_mesaj_kapat', mid=m.id) }}" class="btn btn-outline" style="padding:5px 10px;font-size:11px;margin-top:4px;">Okundu</a>
+            {% else %}<span class="badge badge-free">{{ m.durum }}</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}<p class="muted" style="margin-bottom:40px;">Henüz mesaj yok.</p>{% endif %}
+
+    <!-- KULLANICILAR -->
+    <h2 style="font-size:22px;margin-bottom:16px;">👥 Kullanıcılar</h2>
+    {% if kullanicilar %}
+    <table class="tbl">
+      <thead><tr><th>Ad Soyad</th><th>E-posta</th><th>Ünvan</th><th>Şirket</th><th>Kayıt</th><th>Rol</th></tr></thead>
+      <tbody>
+        {% for u in kullanicilar %}
+        <tr>
+          <td>{{ u.ad_soyad }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.unvan }}</td>
+          <td>{{ u.sirket or '-' }}</td>
+          <td>{{ u.kayit_tarihi.strftime('%d.%m.%Y') }}</td>
+          <td>{% if u.rol == 'admin' %}<span class="badge badge-paid">admin</span>{% else %}{{ u.rol }}{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

@@ -44,7 +44,7 @@ class Program(db.Model):
     ad = db.Column(db.String(200), nullable=False)
     kisa_aciklama = db.Column(db.String(300))
     aciklama = db.Column(db.Text)
-    kategori = db.Column(db.String(60))  # KVK, GVK, Tam Tasdik, KDV vb.
+    kategori = db.Column(db.String(60))  # KVK, GVK, Hesap İncelemeleri, KDV vb.
     mevzuat = db.Column(db.String(200))   # ornek: "KVK m.11/1-i"
     versiyon = db.Column(db.String(20), default="1.0")
     ucretsiz = db.Column(db.Boolean, default=True)
@@ -88,6 +88,44 @@ class Order(db.Model):
     tarih = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class License(db.Model):
+    """Program lisansi - onay mekanizmasi + 1 yil gecerlilik.
+
+    Akis: kullanici lisans talep eder (durum='bekliyor') -> admin onaylar
+    (durum='aktif', baslangic=now, bitis=now+1yil, anahtar uretilir) ->
+    kullanici programi indirir -> program acilista anahtari /api/lisans-dogrula
+    ile kontrol eder. bitis gectiyse program calismaz."""
+    __tablename__ = "licenses"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    program_id = db.Column(db.Integer, db.ForeignKey("programs.id"), nullable=False)
+    anahtar = db.Column(db.String(40), unique=True, index=True)  # XXXX-XXXX-XXXX-XXXX
+    durum = db.Column(db.String(20), default="bekliyor")  # bekliyor, aktif, suresi_doldu, iptal
+    baslangic = db.Column(db.DateTime)
+    bitis = db.Column(db.DateTime)
+    talep_tarihi = db.Column(db.DateTime, default=datetime.utcnow)
+    onaylayan = db.Column(db.String(120))   # admin email
+    onay_tarihi = db.Column(db.DateTime)
+    son_dogrulama = db.Column(db.DateTime)  # program en son ne zaman dogrulama yapti
+    not_ = db.Column(db.String(300))
+
+    user = db.relationship("User", backref="lisanslar")
+    program = db.relationship("Program", backref="lisanslar")
+
+    @property
+    def gecerli_mi(self) -> bool:
+        if self.durum != "aktif" or not self.bitis:
+            return False
+        return datetime.utcnow() <= self.bitis
+
+    @property
+    def kalan_gun(self) -> int:
+        if not self.bitis:
+            return 0
+        delta = self.bitis - datetime.utcnow()
+        return max(0, delta.days)
+
+
 class CollabRequest(db.Model):
     """Ozel cozum / is birligi talebi (musteri kendi ihtiyacini anlatir)."""
     __tablename__ = "collab_requests"
@@ -123,18 +161,18 @@ def seed_programs():
     programlar = [
         {
             "slug": "tt-hesap-incelemeleri",
-            "ad": "Tam Tasdik Raporu - Hesap İncelemeleri Otomasyonu",
-            "kisa_aciklama": "Mizan (Excel) + Kurumlar Vergisi Beyannamesi (PDF) → Word formatında III. Hesap İncelemeleri bölümü",
+            "ad": "Hesap İncelemeleri Otomasyonu",
+            "kisa_aciklama": "Mizan (Excel) + Kurumlar Vergisi Beyannamesi (PDF) → Word formatında bilanço ve gelir tablosu hesap incelemeleri metni",
             "aciklama": (
-                "3568 sayılı SMMM ve YMM Kanunu çerçevesinde düzenlenen Tam Tasdik Raporunun "
-                "III- Hesap İncelemeleri bölümünü mizan ve beyanname verilerinden hareketle otomatik "
-                "üretir. A. Bilanço Hesapları (yabancı para hesapları, MDV/MODV, özkaynaklar dahil) ve "
+                "Mizan ve Kurumlar Vergisi Beyannamesi verilerinden hareketle bilanço ve gelir "
+                "tablosu hesaplarının inceleme metnini Word formatında otomatik üretir. "
+                "A. Bilanço Hesapları (yabancı para hesapları, MDV/MODV, özkaynaklar dahil) ve "
                 "B. Gelir Tablosu Hesapları (satış, maliyet, faaliyet/finansman giderleri, FGK hesabı, "
                 "dönem karı) bölümleri tam metin olarak Word'e yazılır. Tüm tutarlar mizandan çekilir; "
                 "veri uydurulmaz."
             ),
-            "kategori": "Tam Tasdik",
-            "mevzuat": "3568 sayılı Kanun, VUK m.280, VUK Mük. m.298/A, 555 sıra No.lu VUK GT",
+            "kategori": "Hesap İncelemeleri",
+            "mevzuat": "VUK m.280, VUK Mük. m.298/A, 555 sıra No.lu VUK GT",
             "ucretsiz": True,
             "fiyat": 0.0,
             "indirme_dosyasi": "TT_HESAP_INCELEMELERI_v1.0.zip",
@@ -201,7 +239,7 @@ def seed_programs():
                 "Mizan'dan 3'lü/4'lü/5'li hesap toplamlarının otomatik alınması",
                 "Maliyete eklenen finansman gideri ayrıştırma",
                 "Yıl içi geçici vergi dönemleri ile tutarlılık kontrolü",
-                "Tam Tasdik Raporu için hazır FGK tablosu",
+                "Hesap incelemeleri için hazır FGK tablosu",
                 "Excel + Word çıktı",
             ],
         },
@@ -228,7 +266,7 @@ def seed_programs():
                 "Diğer faaliyetlerden elde edilen kazançtan yararlanma (CB Kararı oranı)",
                 "Devreden yatırıma katkı tutarı takibi (yeniden değerleme oranı dahil)",
                 "Geçici vergi dönemleri ile dağıtım",
-                "Tam Tasdik Raporu C bölümü hazır metin çıktısı",
+                "Hesap incelemeleri hazır metin çıktısı",
             ],
         },
     ]
@@ -258,6 +296,36 @@ def seed_admin():
         telefon="0532 177 47 95",
         rol="admin",
     )
-    admin.sifre_belirle("muratalan2026")  # ILK GIRISTEN SONRA DEGISTIRIN
+    admin.sifre_belirle(ADMIN_SIFRE)
     db.session.add(admin)
+    db.session.commit()
+
+
+# Admin varsayilan sifresi (env ile override edilebilir)
+import os as _os
+ADMIN_SIFRE = _os.environ.get("ADMIN_SIFRE", "Gsm6287289.")
+
+
+def sync_admin_sifre():
+    """Mevcut admin kullanicisinin sifresini guncel degerle eslestir."""
+    admin = User.query.filter_by(email="muratal81@gmail.com").first()
+    if admin:
+        admin.sifre_belirle(ADMIN_SIFRE)
+        admin.rol = "admin"
+        db.session.commit()
+
+
+def fix_legacy_texts():
+    """Eski 'Tam Tasdik' / 'YMM tasdik' metinlerini guncelle (etik temizlik).
+    Mevcut PostgreSQL kayitlari seed ile guncellenmedigi icin burada zorla guncellenir."""
+    p = Program.query.filter_by(slug="tt-hesap-incelemeleri").first()
+    if p:
+        p.ad = "Hesap İncelemeleri Otomasyonu"
+        p.kategori = "Hesap İncelemeleri"
+        p.kisa_aciklama = ("Mizan (Excel) + Kurumlar Vergisi Beyannamesi (PDF) → Word formatında "
+                           "bilanço ve gelir tablosu hesap incelemeleri metni")
+        p.mevzuat = "VUK m.280, VUK Mük. m.298/A, 555 sıra No.lu VUK GT"
+    # Kategorisi 'Tam Tasdik' olan tum kayitlari guncelle
+    for prog in Program.query.filter_by(kategori="Tam Tasdik").all():
+        prog.kategori = "Hesap İncelemeleri"
     db.session.commit()

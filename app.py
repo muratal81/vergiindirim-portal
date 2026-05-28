@@ -18,9 +18,29 @@ from flask import (Flask, render_template, request, redirect, url_for, flash,
 from flask_login import (LoginManager, login_user, logout_user, login_required,
                          current_user)
 
+import uuid
+import functools
+from datetime import timedelta
+from flask import jsonify
+
 from config import Config, DOWNLOADS_DIR
 from models import (db, User, Program, ProgramOzellik, Download, Order,
-                    CollabRequest, ContactMessage, seed_programs, seed_admin)
+                    License, CollabRequest, ContactMessage, seed_programs, seed_admin)
+
+
+def _yeni_lisans_anahtari() -> str:
+    """XXXX-XXXX-XXXX-XXXX formatinda benzersiz lisans anahtari."""
+    h = uuid.uuid4().hex.upper()[:16]
+    return "-".join(h[i:i+4] for i in range(0, 16, 4))
+
+
+def admin_required(f):
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            abort(403)
+        return f(*args, **kwargs)
+    return wrapper
 
 
 def create_app() -> Flask:
@@ -85,17 +105,18 @@ def create_app() -> Flask:
         if not program.indirme_dosyasi:
             flash("İndirme dosyası bulunamadı.", "danger")
             return redirect(url_for("program_detay", slug=slug))
-        # Ucretliyse siparis yapilmis olmali (simdilik ucretsiz davraniyoruz)
+
+        # Ucretli programlar lisans (onay + 1 yil gecerlilik) gerektirir
         if not program.ucretsiz:
-            siparis = Order.query.filter_by(
-                user_id=current_user.id, program_id=program.id, durum="odendi"
-            ).first()
-            if not siparis:
+            lisans = (License.query
+                      .filter_by(user_id=current_user.id, program_id=program.id, durum="aktif")
+                      .order_by(License.bitis.desc()).first())
+            if not lisans or not lisans.gecerli_mi:
                 flash(
-                    f"Bu program ücretlidir ({program.fiyat:,.0f}₺). Lütfen önce satın alın.",
-                    "warning"
+                    "Bu program ücretli olup lisans gerektirir. Lütfen lisans talep edin; "
+                    "talebiniz onaylandığında indirme aktifleşecektir.", "warning"
                 )
-                return redirect(url_for("siparis", slug=slug))
+                return redirect(url_for("lisans_talep", slug=slug))
 
         # Indirme kaydi
         dl = Download(user_id=current_user.id, program_id=program.id, ip=request.remote_addr)
@@ -104,23 +125,56 @@ def create_app() -> Flask:
         db.session.commit()
         return send_from_directory(str(DOWNLOADS_DIR), program.indirme_dosyasi, as_attachment=True)
 
-    @app.route("/siparis/<slug>")
+    @app.route("/lisans-talep/<slug>")
     @login_required
-    def siparis(slug):
+    def lisans_talep(slug):
         program = Program.query.filter_by(slug=slug).first_or_404()
         if program.ucretsiz:
             return redirect(url_for("indir", slug=slug))
-        # Mevcut bekleyen siparis var mi?
-        mevcut = Order.query.filter_by(user_id=current_user.id, program_id=program.id).first()
-        if not mevcut:
-            yeni = Order(user_id=current_user.id, program_id=program.id, tutar=program.fiyat)
+        # Zaten aktif lisans var mi?
+        aktif = License.query.filter_by(
+            user_id=current_user.id, program_id=program.id, durum="aktif").first()
+        if aktif and aktif.gecerli_mi:
+            flash("Bu program için zaten geçerli bir lisansınız var.", "info")
+            return redirect(url_for("panel"))
+        # Bekleyen talep var mi?
+        bekleyen = License.query.filter_by(
+            user_id=current_user.id, program_id=program.id, durum="bekliyor").first()
+        if not bekleyen:
+            yeni = License(user_id=current_user.id, program_id=program.id, durum="bekliyor")
             db.session.add(yeni)
             db.session.commit()
         flash(
-            f"Sipariş alındı. Ödeme bilgileri için lütfen {app.config['SITE_TELEFON']} numarasından bizimle iletişime geçin.",
-            "info"
+            f"Lisans talebiniz alındı. Onay ve ödeme bilgileri için {app.config['SITE_TELEFON']} "
+            "numarasından iletişime geçebilirsiniz. Onaylandığında programı indirebilirsiniz.",
+            "success"
         )
         return redirect(url_for("panel"))
+
+    # ----- LISANS DOGRULAMA API (program tarafi cagirir) -----
+    @app.route("/api/lisans-dogrula", methods=["POST", "GET"])
+    def api_lisans_dogrula():
+        anahtar = (request.values.get("anahtar") or "").strip().upper()
+        if not anahtar:
+            return jsonify({"gecerli": False, "mesaj": "Anahtar gönderilmedi."}), 400
+        lisans = License.query.filter_by(anahtar=anahtar).first()
+        if not lisans:
+            return jsonify({"gecerli": False, "mesaj": "Lisans anahtarı bulunamadı."}), 404
+        # Suresi gecmisse durumu guncelle
+        if lisans.durum == "aktif" and lisans.bitis and lisans.bitis < datetime.utcnow():
+            lisans.durum = "suresi_doldu"
+        lisans.son_dogrulama = datetime.utcnow()
+        db.session.commit()
+        return jsonify({
+            "gecerli": lisans.gecerli_mi,
+            "durum": lisans.durum,
+            "program": lisans.program.ad if lisans.program else "",
+            "baslangic": lisans.baslangic.strftime("%d.%m.%Y") if lisans.baslangic else None,
+            "bitis": lisans.bitis.strftime("%d.%m.%Y") if lisans.bitis else None,
+            "kalan_gun": lisans.kalan_gun,
+            "kullanici": lisans.user.ad_soyad if lisans.user else "",
+            "mesaj": "Lisans geçerli." if lisans.gecerli_mi else "Lisans geçersiz veya süresi dolmuş.",
+        })
 
     @app.route("/hakkimizda")
     def hakkimizda():
@@ -244,11 +298,77 @@ def create_app() -> Flask:
             Download.query.filter_by(user_id=current_user.id)
             .order_by(Download.tarih.desc()).limit(20).all()
         )
-        siparisler = (
-            Order.query.filter_by(user_id=current_user.id)
-            .order_by(Order.tarih.desc()).all()
+        lisanslar = (
+            License.query.filter_by(user_id=current_user.id)
+            .order_by(License.talep_tarihi.desc()).all()
         )
-        return render_template("panel.html", indirmeler=indirmeler, siparisler=siparisler)
+        prog_map = {p.id: p for p in Program.query.all()}
+        return render_template("panel.html", indirmeler=indirmeler,
+                               lisanslar=lisanslar, prog_map=prog_map)
+
+    # ------------------ ADMIN PANELI ----------------------
+    @app.route("/admin")
+    @admin_required
+    def admin():
+        bekleyen_lisans = License.query.filter_by(durum="bekliyor").order_by(License.talep_tarihi.desc()).all()
+        aktif_lisans = License.query.filter_by(durum="aktif").order_by(License.bitis.asc()).all()
+        talepler = CollabRequest.query.order_by(CollabRequest.tarih.desc()).limit(50).all()
+        mesajlar = ContactMessage.query.order_by(ContactMessage.tarih.desc()).limit(50).all()
+        kullanicilar = User.query.order_by(User.kayit_tarihi.desc()).all()
+        prog_map = {p.id: p for p in Program.query.all()}
+        istatistik = {
+            "kullanici": User.query.count(),
+            "indirme": Download.query.count(),
+            "bekleyen_lisans": len(bekleyen_lisans),
+            "aktif_lisans": len(aktif_lisans),
+            "talep": CollabRequest.query.filter_by(durum="yeni").count(),
+            "mesaj": ContactMessage.query.filter_by(durum="yeni").count(),
+        }
+        return render_template("admin.html", bekleyen_lisans=bekleyen_lisans,
+                               aktif_lisans=aktif_lisans, talepler=talepler,
+                               mesajlar=mesajlar, kullanicilar=kullanicilar,
+                               prog_map=prog_map, istatistik=istatistik)
+
+    @app.route("/admin/lisans/<int:lid>/onayla")
+    @admin_required
+    def admin_lisans_onayla(lid):
+        lisans = License.query.get_or_404(lid)
+        lisans.anahtar = _yeni_lisans_anahtari()
+        lisans.durum = "aktif"
+        lisans.baslangic = datetime.utcnow()
+        lisans.bitis = datetime.utcnow() + timedelta(days=365)  # 1 yil
+        lisans.onaylayan = current_user.email
+        lisans.onay_tarihi = datetime.utcnow()
+        db.session.commit()
+        flash(f"Lisans onaylandı. Anahtar: {lisans.anahtar} (1 yıl geçerli)", "success")
+        return redirect(url_for("admin"))
+
+    @app.route("/admin/lisans/<int:lid>/iptal")
+    @admin_required
+    def admin_lisans_iptal(lid):
+        lisans = License.query.get_or_404(lid)
+        lisans.durum = "iptal"
+        db.session.commit()
+        flash("Lisans iptal edildi.", "info")
+        return redirect(url_for("admin"))
+
+    @app.route("/admin/talep/<int:tid>/kapat")
+    @admin_required
+    def admin_talep_kapat(tid):
+        t = CollabRequest.query.get_or_404(tid)
+        t.durum = "gorusuldu"
+        db.session.commit()
+        flash("Talep 'görüşüldü' olarak işaretlendi.", "info")
+        return redirect(url_for("admin"))
+
+    @app.route("/admin/mesaj/<int:mid>/kapat")
+    @admin_required
+    def admin_mesaj_kapat(mid):
+        m = ContactMessage.query.get_or_404(mid)
+        m.durum = "okundu"
+        db.session.commit()
+        flash("Mesaj 'okundu' olarak işaretlendi.", "info")
+        return redirect(url_for("admin"))
 
     return app
 
