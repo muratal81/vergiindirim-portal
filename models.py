@@ -305,6 +305,32 @@ import os as _os
 ADMIN_SIFRE = _os.environ.get("ADMIN_SIFRE", "Gsm6287289.")
 
 
+def ensure_schema():
+    """Mevcut tabloya sonradan eklenen kolonlari guvenli sekilde ekler.
+    db.create_all() var olan tabloya kolon EKLEMEZ; bu fonksiyon onu telafi eder.
+    PostgreSQL ve SQLite uyumludur."""
+    from sqlalchemy import inspect, text
+    insp = inspect(db.engine)
+    try:
+        mevcut_tablolar = insp.get_table_names()
+    except Exception:
+        return
+    # users tablosuna reset_token / reset_expiry
+    if "users" in mevcut_tablolar:
+        kolonlar = [c["name"] for c in insp.get_columns("users")]
+        eklemeler = []
+        if "reset_token" not in kolonlar:
+            eklemeler.append("ALTER TABLE users ADD COLUMN reset_token VARCHAR(64)")
+        if "reset_expiry" not in kolonlar:
+            eklemeler.append("ALTER TABLE users ADD COLUMN reset_expiry TIMESTAMP")
+        for sql in eklemeler:
+            try:
+                with db.engine.begin() as conn:
+                    conn.execute(text(sql))
+            except Exception as e:
+                print(f"[ensure_schema] {sql} -> {e}")
+
+
 def sync_admin_sifre():
     """Mevcut admin kullanicisinin sifresini guncel degerle eslestir."""
     admin = User.query.filter_by(email="muratal81@gmail.com").first()
