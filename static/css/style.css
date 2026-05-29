@@ -542,3 +542,91 @@ footer.site { background: linear-gradient(180deg, #050c1e, #02060f); }
 
 /* ---- secim rengi ---- */
 ::selection { background: rgba(245,197,66,.3); color: #fff; }
+
+/* ============================================================
+   PREMIUM CILA v4 — surec akisi, derinlik, butunluk
+   Acik bolumlere ince doku, koyu hero butunlugu, 3 adim akisi.
+   Hicbir sey ciddiyeti bozmaz; sadece "siradan" hissini siler.
+   ============================================================ */
+
+/* ---- ACIK "alt" bolumlere ince nokta dokusu (navy ile uyum) ---- */
+section.block.alt { position: relative; overflow: hidden; }
+section.block.alt::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle at 1px 1px, rgba(16,42,92,.045) 1px, transparent 0);
+  background-size: 28px 28px; opacity: .9;
+}
+section.block.alt > .container { position: relative; z-index: 1; }
+
+/* ---- ALT BASLIK (page-head) hero ile ayni altin glow butunlugu ---- */
+.page-head { position: relative; overflow: hidden; }
+.page-head::after {
+  content: ""; position: absolute; right: -130px; top: -130px; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(245,197,66,.16), transparent 70%); pointer-events: none;
+}
+.page-head::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.05) 1px, transparent 0);
+  background-size: 30px 30px; opacity: .5;
+}
+.page-head .container { position: relative; z-index: 2; }
+
+/* ---- NASIL CALISIR: 3 adim akis cizgisi (process flow) ---- */
+.steps-flow .step {
+  text-align: center; position: relative; z-index: 1;
+}
+.steps-flow .step .s-num {
+  margin-left: auto; margin-right: auto; position: relative; z-index: 2;
+}
+/* numaralar arasini birlestiren altin kesik cizgi (sadece masaustu) */
+.steps-flow .step:not(:last-child)::after {
+  content: ""; position: absolute; top: 24px; left: calc(50% + 32px);
+  width: calc(100% - 64px); height: 2px; z-index: 0;
+  background: repeating-linear-gradient(90deg, var(--gold-400) 0 7px, transparent 7px 15px);
+  opacity: .55;
+}
+.steps-flow .step:not(:last-child)::before {
+  content: ""; position: absolute; top: 20px; left: calc(100% - 34px);
+  width: 9px; height: 9px; border-radius: 50%; background: var(--gold-400);
+  box-shadow: 0 0 12px rgba(245,197,66,.6); z-index: 1; opacity: .9;
+}
+@media (max-width: 980px) {
+  .steps-flow .step:not(:last-child)::after,
+  .steps-flow .step:not(:last-child)::before { display: none; }
+}
+
+/* ---- PROGRAM KART ust seridi: gece temasinda neon ---- */
+.prog-card::before { background: linear-gradient(90deg, var(--navy-500), #f5c542); }
+
+/* ---- COLLAB CTA: ince altin cerceve + derinlik ---- */
+.collab { border: 1px solid rgba(245,197,66,.18); }
+.collab::before {
+  content: ""; position: absolute; left: -50px; bottom: -70px; width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(43,79,150,.45), transparent 70%);
+  border-radius: 50%; pointer-events: none;
+}
+
+/* ---- BASLIK alti gradient cizgi: ortali bolumlerde ortala ---- */
+.section-head h2::after { background: linear-gradient(90deg, #f5c542, var(--navy-500)); }
+
+/* ---- DETAY yan kart: sticky fiyat kartina ince ust seridi ---- */
+.detail-side { position: sticky; }
+.detail-side::before {
+  content: ""; display: block; height: 3px; width: 46px; border-radius: 2px;
+  background: linear-gradient(90deg, #f5c542, var(--navy-500)); margin-bottom: 16px;
+}
+
+/* ---- FOOTER linklerine ince hover kaymasi ---- */
+footer.site a { transition: color .2s, padding-left .2s; }
+footer.site a:hover { padding-left: 4px; }
+
+/* ---- baglantilarda odak gorunurlugu (erisilebilirlik) ---- */
+a:focus-visible, .btn:focus-visible, .field input:focus-visible,
+.field select:focus-visible, .field textarea:focus-visible {
+  outline: 2px solid var(--gold-400); outline-offset: 2px;
+}
+
+/* ---- hareket azaltma: v4 dekoratiflerini de sabitle ---- */
+@media (prefers-reduced-motion: reduce) {
+  .collab::before { animation: none !important; }
+}
