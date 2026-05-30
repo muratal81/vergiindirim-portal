@@ -609,6 +609,34 @@ def create_app() -> Flask:
         flash("Mesaj 'okundu' olarak işaretlendi.", "info")
         return redirect(url_for("admin"))
 
+    # ------------------ GECICI TESHIS (mailer kontrol) ----------------------
+    # Gizli URL: sadece bu token'i bilen kullanir; deploy sonrasi mailer
+    # konfigurasyonunu ve test gonderimini dogrudan raporlar. Hata bulunup
+    # cozuldukten sonra silinecek.
+    @app.route("/__diag__/3f8a91b2c7d4/<hedef>")
+    def __diag_mail(hedef):
+        bilgi = {
+            "smtp_ayarli": mailer.smtp_ayarli_mi(),
+            "MAIL_HOST": os.environ.get("MAIL_HOST") or "(yok)",
+            "MAIL_PORT": os.environ.get("MAIL_PORT") or "(yok)",
+            "MAIL_USER": os.environ.get("MAIL_USER") or "(yok)",
+            "MAIL_PASS_set": bool(os.environ.get("MAIL_PASS")),
+            "MAIL_PASS_uzunluk": len(os.environ.get("MAIL_PASS") or ""),
+            "MAIL_FROM": os.environ.get("MAIL_FROM") or "(yok)",
+            "ADMIN_EMAIL": os.environ.get("ADMIN_EMAIL") or "(yok)",
+            "SITE_EMAIL": app.config.get("SITE_EMAIL"),
+        }
+        # 'send' parametresi varsa test gonderimi yap
+        if request.args.get("send") == "1":
+            sonuc = mailer.send_mail(
+                hedef + "@gmail.com" if "@" not in hedef else hedef,
+                "🔧 Test Mail — vergiindirim.com.tr",
+                "<p>Bu bir <b>test mailidir</b>. SMTP konfigurasyonu kontrolu icin gonderildi.</p>"
+                "<p>Eger bu maili aliyorsaniz mailer dogru calisiyor demektir.</p>"
+            )
+            bilgi["test_gonderildi"] = sonuc
+        return jsonify(bilgi)
+
     return app
 
 

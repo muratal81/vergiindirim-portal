@@ -35,7 +35,9 @@ def send_mail(to: str, subject: str, body_html: str) -> bool:
     user = os.environ.get("MAIL_USER", "").strip()
     pw = os.environ.get("MAIL_PASS", "").strip()
     mail_from = os.environ.get("MAIL_FROM", user)
+    print(f"[mailer] cagri: to={to} subject={subject[:60]!r} host={host!r} port={port} user={user!r} pw_set={bool(pw)}", flush=True)
     if not (host and user and pw):
+        print(f"[mailer] SMTP eksik -> mail gonderilmedi (host={bool(host)}, user={bool(user)}, pw={bool(pw)})", flush=True)
         return False
     try:
         msg = MIMEText(body_html, "html", "utf-8")
@@ -56,9 +58,10 @@ def send_mail(to: str, subject: str, body_html: str) -> bool:
                 s.starttls(context=ctx)
                 s.login(user, pw)
                 s.sendmail(user, [to], msg.as_string())
+        print(f"[mailer] OK gonderildi: to={to}", flush=True)
         return True
     except Exception as e:
-        print(f"[mailer] Gonderim hatasi: {e}")
+        print(f"[mailer] Gonderim hatasi ({type(e).__name__}): {e}", flush=True)
         return False
 
 
