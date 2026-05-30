@@ -52,8 +52,10 @@
               ⬇ {% if program.ucretsiz %}Hemen İndir{% else %}Satın Al ve İndir{% endif %}
             </a>
             <p class="muted" style="font-size:12.5px;text-align:center;margin-top:10px;line-height:1.5;">
-              🔒 İndirme yöneticinin onayını gerektirir. Onaylandığında ZIP parolası mail ile iletilir.
-              ZIP <strong>AES-256</strong> ile şifrelidir, kopyalanamaz/değiştirilemez.
+              🔒 İndirme yöneticinin onayını gerektirir. Onaylandığında lisans anahtarı + ZIP parolası
+              mail ile iletilir. ZIP <strong>AES-256</strong> ile şifrelidir; açmak için
+              <a href="https://www.7-zip.org/download.html" target="_blank">7-Zip</a> gerekir
+              (Windows yerleşik ZIP'i yetersizdir).
             </p>
           {% else %}
             <a href="{{ url_for('giris', next=url_for('program_detay', slug=program.slug)) }}" class="btn btn-gold btn-block btn-lg" style="margin-top:16px;">

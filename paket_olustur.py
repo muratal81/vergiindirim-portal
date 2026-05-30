@@ -21,8 +21,12 @@ import zipfile
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
-KAYNAK = BASE.parent / "TT HESAP İNCELEMERLİ PROGRAMI" / "TT_HESAP_INCELEMELERI"
+KAYNAK_PARENT = BASE.parent / "TT HESAP İNCELEMERLİ PROGRAMI"
+KAYNAK = KAYNAK_PARENT / "TT_HESAP_INCELEMELERI"
 HEDEF = BASE / "downloads" / "VI_RAPOR_v1.1.zip"
+
+# Parent klasorden ZIP'in KOKUNE alinacak baslatici dosyalar
+KOK_DOSYALAR = ["KURULUM.bat", "BASLAT_MASAUSTU.bat", "BASLAT_WEB.bat"]
 
 DISLA_DIZIN = {"__pycache__", "ornek_ciktilar", ".venv", ".git"}
 DISLA_DOSYA_DESEN = re.compile(
@@ -92,13 +96,31 @@ def paket_olustur(kaynak: Path = KAYNAK, hedef: Path = HEDEF) -> None:
     if hedef.exists():
         hedef.unlink()
 
+    # KURULUM_VE_KULLANIM.md'i ZIP kokune kopyala (kullanici hemen gorsun)
+    readme_kaynak = kaynak / "KURULUM_VE_KULLANIM.md"
+
     with zipfile.ZipFile(hedef, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
+        # 1) Baslatici .bat'lar (ZIP kokune)
+        bat_sayisi = 0
+        for bat in KOK_DOSYALAR:
+            kaynak_yol = KAYNAK_PARENT / bat
+            if kaynak_yol.exists():
+                zf.write(kaynak_yol, arcname=bat)
+                bat_sayisi += 1
+            else:
+                print(f"UYARI: {bat} bulunamadi: {kaynak_yol}")
+        # 2) README'i kokte de yer alsin (kullanici aciliste gorsun)
+        if readme_kaynak.exists():
+            zf.write(readme_kaynak, arcname="KURULUM_VE_KULLANIM.md")
+        # 3) Program kodu (TT_HESAP_INCELEMELERI/ alt klasoru)
         for tam in dahil_edilenler:
             arc = "TT_HESAP_INCELEMELERI/" + str(tam.relative_to(kaynak)).replace("\\", "/")
             zf.write(tam, arcname=arc)
 
     boyut_kb = hedef.stat().st_size / 1024
-    print(f"OK: {hedef} olusturuldu ({boyut_kb:.1f} KB, {len(dahil_edilenler)} dosya)")
+    toplam = len(dahil_edilenler) + bat_sayisi + (1 if readme_kaynak.exists() else 0)
+    print(f"OK: {hedef} olusturuldu ({boyut_kb:.1f} KB, {toplam} dosya)")
+    print(f"     - Baslatici .bat: {bat_sayisi}, README: {'evet' if readme_kaynak.exists() else 'YOK'}, program: {len(dahil_edilenler)}")
     print("Not: Bu master ZIP parolasizdir; indirme aninda kullanici lisansina ozel")
     print("     AES parolali bir kopyasi app.py icinde uretilir.")
 

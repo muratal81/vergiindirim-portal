@@ -53,11 +53,16 @@
               {% endfor %}
             </tbody>
           </table>
-          <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:12px 14px;margin-top:14px;font-size:13px;color:#92400e;">
+          <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:12px 14px;margin-top:14px;font-size:13px;color:#92400e;line-height:1.55;">
             <strong>🔐 Önemli — Lisans &amp; ZIP Parolası:</strong>
-            İndirdiğiniz ZIP <strong>AES-256 ile şifrelidir</strong>; açarken <strong>"ZIP Parolası"</strong>nı kullanın.
-            Program ilk açılışında <strong>"Lisans Anahtarı"</strong> ile online doğrulama yapar; lisans iptali
-            veya süre dolumunda çalışmaz. Lisans ve parola <strong>kişiseldir</strong>, paylaşmayın.
+            İndirdiğiniz ZIP <strong>AES-256 ile şifrelidir</strong>; açmak için
+            <a href="https://www.7-zip.org/download.html" target="_blank" style="color:#92400e;text-decoration:underline;">7-Zip</a>
+            (ücretsiz) kurun — Windows'un yerleşik ZIP'i yetersizdir. ZIP'e sağ tık → 7-Zip → Buraya çıkar →
+            açılan kutuya yukarıdaki <strong>ZIP Parolası</strong>'nı yapıştırın. Klasördeki
+            <code>KURULUM.bat</code> ile paketleri kurun, sonra <code>BASLAT_WEB.bat</code> ya da
+            <code>BASLAT_MASAUSTU.bat</code> ile başlatın. Program ilk açılışta <strong>Lisans Anahtarı</strong>
+            ile online doğrulama yapar; lisans iptali veya süre dolumunda çalışmaz.
+            Lisans ve parola <strong>kişiseldir</strong>, paylaşmayın.
           </div>
           {% else %}
           <p class="muted">Henüz lisansınız bulunmamaktadır. Programlar ücretli/ücretsiz fark etmeksizin yönetici onayıyla indirilebilir.</p>
