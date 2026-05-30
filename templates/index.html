@@ -5,21 +5,22 @@
 <section class="hero">
   <div class="container">
     <div class="hero-text">
-      <span class="hero-badge">⚖ Mali Müşavirlik Uzmanlığıyla Geliştirildi</span>
-      <h1>Vergi yükünü <span class="accent">yasal yollarla</span> düşüren hesaplama yazılımları</h1>
+      <span class="hero-badge">⚖ Vergi Uzmanlığı × Yazılım Teknolojisi</span>
+      <h1>Vergi Yükünü <span class="accent">Yasal Yollarla</span> Düşüren Hesaplama Yazılımları</h1>
       <p class="lead">
-        AR-GE indirimi, indirimli kurumlar vergisi, finansman gider kısıtlaması ve hesap incelemeleri…
-        Mevzuatı karmaşık olan özellikli vergi konularını <strong style="color:#fff;">dakikalar içinde,
-        mevzuat referanslı ve denetlenebilir</strong> şekilde hesaplayın.
+        AR-GE İndirimi, İndirimli Kurumlar Vergisi, Finansman Gider Kısıtlaması ve Hesap İncelemeleri…
+        Vergi uzmanlığı ile yazılım teknolojisini bir araya getirdik;
+        <strong style="color:#fff;">mevzuat referanslı, denetlenebilir hesaplama yazılımlarıyla</strong>
+        karmaşık vergi konularını dakikalara indiriyoruz.
       </p>
       <div class="hero-cta">
         <a href="{{ url_for('programlar') }}" class="btn btn-gold btn-lg">Programları Keşfet →</a>
-        <a href="{{ url_for('isbirligi') }}" class="btn btn-ghost btn-lg">Özel Çözüm İste</a>
+        <a href="#teklif" class="btn btn-ghost btn-lg">Teklif Al</a>
       </div>
       <div class="hero-stats">
-        <div class="stat"><div class="num" data-count="4" data-suffix="+">0+</div><div class="lbl">Hazır & geliştirilen program</div></div>
-        <div class="stat"><div class="num"><span data-count="100" data-suffix="">0</span>%</div><div class="lbl">Mevzuat referanslı çıktı</div></div>
-        <div class="stat"><div class="num">KVKK</div><div class="lbl">Yerel & güvenli çalışma</div></div>
+        <div class="stat"><div class="num" data-count="4" data-suffix="+">0+</div><div class="lbl">Hazır & Geliştirilen Program</div></div>
+        <div class="stat"><div class="num"><span data-count="100" data-suffix="">0</span>%</div><div class="lbl">Mevzuat Referanslı Çıktı</div></div>
+        <div class="stat"><div class="num">KVKK</div><div class="lbl">Yerel & Güvenli Çalışma</div></div>
       </div>
     </div>
   </div>
@@ -31,10 +32,10 @@
 <!-- TRUST BAR -->
 <div class="trustbar">
   <div class="container">
-    <div class="ti">⚖ <span>Mevzuat referanslı (VUK, KVK, GVK, 5746, 7440)</span></div>
-    <div class="ti">🔍 <span>Kaynak izlenebilirliği & denetim izi</span></div>
-    <div class="ti">🔒 <span>KVKK uyumlu, yerel çalışma</span></div>
-    <div class="ti">📄 <span>Word / Excel hazır çıktı</span></div>
+    <div class="ti">⚖ <span>Mevzuat Referanslı (VUK, KVK, GVK, 5746, 7440)</span></div>
+    <div class="ti">🔍 <span>Kaynak İzlenebilirliği & Denetim İzi</span></div>
+    <div class="ti">🔒 <span>KVKK Uyumlu, Yerel Çalışma</span></div>
+    <div class="ti">📄 <span>Word / Excel Hazır Çıktı</span></div>
   </div>
 </div>
 
@@ -43,8 +44,8 @@
   <div class="container">
     <div class="section-head reveal">
       <span class="eyebrow">Programlarımız</span>
-      <h2>Özellikli vergi konuları için hazır yazılımlar</h2>
-      <p>Her program, mali müşavirlik uygulamasında sık karşılaşılan ve mevzuatı karmaşık olan bir başlık için, gerçek mali tablo dosyaları üzerinde test edilerek geliştirilmiştir.</p>
+      <h2>Özellikli Vergi Konuları İçin Hazır Yazılımlar</h2>
+      <p>Her program, vergi uygulamasında sık karşılaşılan ve mevzuatı karmaşık olan bir başlık için gerçek mali tablo dosyaları üzerinde test edilerek geliştirilmiştir.</p>
     </div>
 
     <div class="grid grid-2 reveal">
@@ -54,7 +55,8 @@
           <div class="pc-icon">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center;">
+            {% if p.marka %}<span class="badge badge-marka">{{ p.marka }}</span>{% endif %}
             {% if p.ucretsiz %}<span class="badge badge-free">Ücretsiz</span>
             {% else %}<span class="badge badge-paid">{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺ + KDV</span>{% endif %}
             {% if p.durum == 'gelistirme' %}<span class="badge badge-soon">Yakında</span>{% endif %}
@@ -78,13 +80,13 @@
   <div class="container">
     <div class="section-head on-navy reveal">
       <span class="eyebrow">Neden Bu Programlar?</span>
-      <h2>Mali müşavirlik uzmanlığı, yazılıma dönüştü</h2>
+      <h2>Vergi Uzmanlığı, Yazılım Teknolojisiyle Buluştu</h2>
       <p>Özellikli vergi konularındaki yıllara dayalı tecrübe; güvenilir, hatasız ve hızlı bir yazılıma aktarıldı.</p>
     </div>
     <div class="grid grid-3 reveal">
       <div class="feature">
         <div class="f-icon">📚</div>
-        <h3>Mevzuat referanslı</h3>
+        <h3>Mevzuat Referanslı</h3>
         <p>Her hesaplama VUK, KVK, GVK, 5746, 7440 ve MSUGT gibi yürürlükteki mevzuata atıfla üretilir. Çıktıda referanslar korunur.</p>
       </div>
       <div class="feature">
@@ -94,22 +96,22 @@
       </div>
       <div class="feature">
         <div class="f-icon">🔒</div>
-        <h3>KVKK & yerel çalışma</h3>
+        <h3>KVKK & Yerel Çalışma</h3>
         <p>Masaüstü sürüm mükellef verisini buluta göndermez. Tüm hesaplama ofisinizdeki bilgisayarda yapılır.</p>
       </div>
       <div class="feature">
         <div class="f-icon">🚫</div>
-        <h3>Veri uydurmaz</h3>
-        <p>Eksik veride metin üretmez; eksik belge listesi çıkarır. Mali müşavir onayı olmadan nihai çıktı vermez.</p>
+        <h3>Veri Uydurmaz</h3>
+        <p>Eksik veride metin üretmez; eksik belge listesi çıkarır. Yetkili onayı olmadan nihai çıktı vermez.</p>
       </div>
       <div class="feature">
         <div class="f-icon">⚡</div>
-        <h3>Dakikalar içinde</h3>
+        <h3>Dakikalar İçinde</h3>
         <p>Saatlerce süren manuel hesaplamalar ve metin yazımı; mizan ve beyannameyi yükleyince dakikalara iner.</p>
       </div>
       <div class="feature">
         <div class="f-icon">🔄</div>
-        <h3>Sürekli güncel</h3>
+        <h3>Sürekli Güncel</h3>
         <p>Mevzuat değişikliklerinde tek noktadan güncelleme yapılır. Önceki dönem çıktıları kendi sürümüyle saklanır.</p>
       </div>
     </div>
@@ -121,46 +123,96 @@
   <div class="container">
     <div class="section-head reveal">
       <span class="eyebrow">Nasıl Çalışır?</span>
-      <h2>Üç adımda hazır çıktı</h2>
+      <h2>Üç Adımda Hazır Çıktı</h2>
       <p>Karmaşık mevzuat hesaplamaları, basit bir akışla otomatikleşir.</p>
     </div>
     <div class="grid grid-3 reveal steps-flow">
       <div class="step">
         <div class="s-num">1</div>
-        <h3>Belgeleri yükle</h3>
+        <h3>Belgeleri Yükle</h3>
         <p>Mizan (Excel), Kurumlar Vergisi Beyannamesi (PDF), muavin ve çalışma kâğıtlarını programa yükleyin.</p>
       </div>
       <div class="step">
         <div class="s-num">2</div>
-        <h3>Program hesaplasın</h3>
+        <h3>Program Hesaplasın</h3>
         <p>Mevzuat kuralları uygulanır, mizan-beyanname çapraz mutabakatı yapılır, eksik veri varsa uyarı verilir.</p>
       </div>
       <div class="step">
         <div class="s-num">3</div>
-        <h3>Word / Excel indir</h3>
+        <h3>Word / Excel İndir</h3>
         <p>Profesyonel rapor üslubunda metin ve tablolar; mevzuat referanslı, denetlenebilir çıktı olarak hazır.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ISBIRLIGI / OZEL COZUM -->
+<!-- REFERANSLAR -->
 <section class="block">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Hedef Kitle</span>
+      <h2>Kimler Kullanır?</h2>
+      <p>Yazılımlarımız vergi denetim ve hesaplamasının her noktasında çalışan profesyoneller için tasarlandı.</p>
+    </div>
+    <div class="ref-grid reveal">
+      <div class="ref-item"><div class="ref-ico">🏢</div><div class="ref-tx"><strong>YMM Ofisleri</strong><span>Tasdik ve denetim çalışmalarında</span></div></div>
+      <div class="ref-item"><div class="ref-ico">📊</div><div class="ref-tx"><strong>SMMM Büroları</strong><span>Vergi indirimi hesaplama ve raporlamada</span></div></div>
+      <div class="ref-item"><div class="ref-ico">🏭</div><div class="ref-tx"><strong>Sanayi Şirketleri</strong><span>5746 AR-GE ve KVK 32/A teşvik takibinde</span></div></div>
+      <div class="ref-item"><div class="ref-ico">⚖</div><div class="ref-tx"><strong>İç Denetçiler</strong><span>Hesap incelemeleri ve mutabakatta</span></div></div>
+      <div class="ref-item"><div class="ref-ico">📑</div><div class="ref-tx"><strong>Vergi Müşavirleri</strong><span>FGK, kur farkı ve özkaynak analizinde</span></div></div>
+      <div class="ref-item"><div class="ref-ico">🎓</div><div class="ref-tx"><strong>Akademisyenler & Stajyerler</strong><span>Vaka çalışmaları ve eğitim materyalinde</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEGERLENDIRMELER -->
+<section class="block navy">
+  <div class="container">
+    <div class="section-head on-navy reveal">
+      <span class="eyebrow">Değerlendirmeler</span>
+      <h2>Kullanıcı Yorumları</h2>
+      <p>Sahada kullanan meslek mensuplarının deneyimleri (örnek değerlendirmeler — sürekli güncellenir).</p>
+    </div>
+    <div class="grid grid-3 reveal">
+      <div class="testi">
+        <div class="t-stars">★★★★★</div>
+        <p>"Hesap incelemeleri bölümünü Word'e döktüğünde, normalde 2 günümü alan iş 20 dakikaya iniyor. Mevzuat referansları çıktıda korunduğu için denetimde rahatlıkla savunabiliyorum."</p>
+        <div class="t-meta"><strong>S. T.</strong><span>SMMM · Ankara</span></div>
+      </div>
+      <div class="testi">
+        <div class="t-stars">★★★★★</div>
+        <p>"5746 AR-GE indirim hesabını her dönem yeniden kurmak zorunda kalmıyorum. Muhtasar ve SGK ile çapraz mutabakat tek tıkla. Üretim şirketlerimizde standart aracımız oldu."</p>
+        <div class="t-meta"><strong>E. K.</strong><span>YMM · İstanbul</span></div>
+      </div>
+      <div class="testi">
+        <div class="t-stars">★★★★★</div>
+        <p>"İndirimli Kurumlar Vergisi (KVK 32/A) hesaplaması en zorlandığım konuydu. Devreden YKT, endeksleme ve 2025 asgari KV etkisini tek ekranda görmek büyük rahatlık."</p>
+        <div class="t-meta"><strong>M. A.</strong><span>Vergi Müşaviri · İzmir</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEKLIF AL -->
+<section id="teklif" class="block">
   <div class="container">
     <div class="collab reveal">
       <div class="c-inner">
         <div>
-          <span class="hero-badge" style="margin-bottom:16px;">🤝 Size Özel Geliştirme</span>
-          <h2>İhtiyacınıza özel program birlikte geliştirilir</h2>
+          <span class="hero-badge" style="margin-bottom:16px;">💼 Teklif Al / Özel Çözüm</span>
+          <h2>Hangi Program İlgilinizi Çekiyor?</h2>
           <p>
-            Ofisinizin tekrar eden bir hesaplaması, kendine has bir mizan formatı ya da mevzuatın
-            yeni bir başlığı mı var? İhtiyacınızı anlatın; <strong style="color:#fff;">iş birliği
-            modeliyle</strong> size özel hesaplama yazılımını birlikte tasarlayıp geliştirelim.
-            Mevcut programlar da talebinize göre özelleştirilebilir.
+            Programlarımızdan biri için fiyat, demo veya ofisinize özel uyarlama ister misiniz?
+            <strong style="color:#fff;">İhtiyacınızı yazın</strong>, en kısa sürede size dönüş yapalım.
+            Çoklu lisans, yıllık abonelik ve özel format desteği için <strong style="color:#fff;">teklif aşamasında belirtin</strong>.
           </p>
+          <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:14.5px;color:#c7d2e8;">
+            <span>📞 {{ SITE_TELEFON }}</span>
+            <span>✉ {{ SITE_EMAIL }}</span>
+          </div>
         </div>
         <div class="c-cta">
-          <a href="{{ url_for('isbirligi') }}" class="btn btn-gold btn-block btn-lg">Özel Çözüm Talep Et</a>
+          <a href="{{ url_for('isbirligi') }}" class="btn btn-gold btn-block btn-lg">Teklif Talep Et</a>
           <a href="{{ url_for('iletisim') }}" class="btn btn-ghost btn-block">İletişime Geç</a>
         </div>
       </div>
@@ -174,7 +226,7 @@
   <div class="container">
     <div class="section-head reveal">
       <span class="eyebrow">Yol Haritası</span>
-      <h2>Geliştirme aşamasındaki programlar</h2>
+      <h2>Geliştirme Aşamasındaki Programlar</h2>
       <p>Yakında yayında olacak yeni hesaplama yazılımları. Haberdar olmak için ücretsiz üye olun.</p>
     </div>
     <div class="grid grid-3 reveal">
@@ -182,7 +234,8 @@
       <div class="prog-card tilt">
         <div class="pc-top">
           <div class="pc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center;">
+            {% if p.marka %}<span class="badge badge-marka">{{ p.marka }}</span>{% endif %}
             {% if p.ucretsiz %}<span class="badge badge-free">Ücretsiz</span>
             {% else %}<span class="badge badge-paid">{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺ + KDV</span>{% endif %}
             <span class="badge badge-soon">Yakında</span>

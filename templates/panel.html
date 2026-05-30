@@ -35,12 +35,13 @@
           <h2 style="font-size:20px;margin-bottom:18px;">Lisanslarım</h2>
           {% if lisanslar %}
           <table class="tbl">
-            <thead><tr><th>Program</th><th>Lisans Anahtarı</th><th>Durum</th><th>Bitiş</th></tr></thead>
+            <thead><tr><th>Program</th><th>Lisans Anahtarı</th><th>ZIP Parolası</th><th>Durum</th><th>Bitiş</th></tr></thead>
             <tbody>
               {% for l in lisanslar %}
               <tr>
                 <td>{{ prog_map[l.program_id].ad if l.program_id in prog_map else l.program_id }}</td>
                 <td>{% if l.anahtar %}<code style="font-size:12.5px;">{{ l.anahtar }}</code>{% else %}<span class="muted">—</span>{% endif %}</td>
+                <td>{% if l.zip_parolasi and l.durum=='aktif' %}<code style="font-size:12px;">{{ l.zip_parolasi }}</code>{% else %}<span class="muted">—</span>{% endif %}</td>
                 <td>
                   {% if l.durum=='aktif' and l.gecerli_mi %}<span class="badge badge-free">Aktif ({{ l.kalan_gun }} gün)</span>
                   {% elif l.durum=='bekliyor' %}<span class="badge badge-soon">Onay Bekliyor</span>
@@ -52,11 +53,14 @@
               {% endfor %}
             </tbody>
           </table>
-          <p class="muted" style="font-size:12.5px;margin-top:12px;">
-            Lisans anahtarınızı programın ilk açılışında girerek 1 yıl boyunca kullanabilirsiniz.
-          </p>
+          <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:12px 14px;margin-top:14px;font-size:13px;color:#92400e;">
+            <strong>🔐 Önemli — Lisans &amp; ZIP Parolası:</strong>
+            İndirdiğiniz ZIP <strong>AES-256 ile şifrelidir</strong>; açarken <strong>"ZIP Parolası"</strong>nı kullanın.
+            Program ilk açılışında <strong>"Lisans Anahtarı"</strong> ile online doğrulama yapar; lisans iptali
+            veya süre dolumunda çalışmaz. Lisans ve parola <strong>kişiseldir</strong>, paylaşmayın.
+          </div>
           {% else %}
-          <p class="muted">Henüz lisansınız bulunmamaktadır. Ücretli programlar için lisans talep edebilirsiniz.</p>
+          <p class="muted">Henüz lisansınız bulunmamaktadır. Programlar ücretli/ücretsiz fark etmeksizin yönetici onayıyla indirilebilir.</p>
           {% endif %}
         </div>
       </div>

@@ -14,12 +14,15 @@ from datetime import datetime
 from pathlib import Path
 
 from flask import (Flask, render_template, request, redirect, url_for, flash,
-                   send_from_directory, abort, session)
+                   send_from_directory, send_file, abort, session)
 from flask_login import (LoginManager, login_user, logout_user, login_required,
                          current_user)
 
+import io
 import uuid
+import string
 import secrets
+import zipfile
 import functools
 from datetime import timedelta
 from flask import jsonify
@@ -34,6 +37,52 @@ def _yeni_lisans_anahtari() -> str:
     """XXXX-XXXX-XXXX-XXXX formatinda benzersiz lisans anahtari."""
     h = uuid.uuid4().hex.upper()[:16]
     return "-".join(h[i:i+4] for i in range(0, 16, 4))
+
+
+def _yeni_zip_parolasi() -> str:
+    """ZIP icin 18 karakterli karisik (harf+rakam) AES parolasi."""
+    alfabe = string.ascii_letters + string.digits
+    return "".join(secrets.choice(alfabe) for _ in range(18))
+
+
+def _olustur_sifreli_zip(master_path, parola: str, lisans_anahtari: str,
+                         kullanici_email: str, program_ad: str) -> io.BytesIO:
+    """Master ZIP'i AES-256 sifreli ve LISANS bilgilerini icinde tasiyan
+    yeni bir ZIP'e donusturur. Cikti BytesIO; disk'e yazilmaz.
+
+    Lisans bilgisi ZIP icine '_LISANS.txt' olarak eklenir; program acilista
+    bu metni okuyup online dogrulama yapar.
+    """
+    import pyzipper
+
+    out = io.BytesIO()
+    lisans_metni = (
+        f"VERGI INDIRIM PROGRAMLARI - LISANS DOSYASI\n"
+        f"==========================================\n"
+        f"Program        : {program_ad}\n"
+        f"Lisans Sahibi  : {kullanici_email}\n"
+        f"Lisans Anahtari: {lisans_anahtari}\n"
+        f"\n"
+        f"Bu lisans dosyasini SILMEYIN ve PAYLASMAYIN.\n"
+        f"Program her acilista online dogrulama yapar; lisans iptal/sona\n"
+        f"erdiginde program calismaz. Kopyalama veya degisiklik denemesi\n"
+        f"telif hakki ihlali olusturur (5846 sk. m.71).\n"
+        f"\n"
+        f"https://vergiindirim.com.tr\n"
+    )
+    with pyzipper.AESZipFile(out, "w", compression=pyzipper.ZIP_DEFLATED,
+                              encryption=pyzipper.WZ_AES) as zf_out:
+        zf_out.setpassword(parola.encode("utf-8"))
+        zf_out.setencryption(pyzipper.WZ_AES, nbits=256)
+        # Lisans dosyasini en uste koy
+        zf_out.writestr("TT_HESAP_INCELEMELERI/_LISANS.txt", lisans_metni)
+        # Master ZIP'in icerigini kopyala
+        with zipfile.ZipFile(master_path, "r") as zf_in:
+            for ad in zf_in.namelist():
+                data = zf_in.read(ad)
+                zf_out.writestr(ad, data)
+    out.seek(0)
+    return out
 
 
 def admin_required(f):
@@ -120,25 +169,61 @@ def create_app() -> Flask:
             flash("İndirme dosyası bulunamadı.", "danger")
             return redirect(url_for("program_detay", slug=slug))
 
-        # Admin (site sahibi) tum programlari onaysiz indirir
+        # KISITLI INDIRME — Admin (site sahibi) tum programlari onaysiz indirir.
+        # Diger TUM kullanicilar (kayitli da olsa) yalnizca admin onayli aktif
+        # lisansa sahipse indirebilir. Mail onayi veya admin panel onayi sonrasi
+        # aktiflesir; onaysiz hicbir kullanici hicbir programi indiremez.
+        lisans = None
         if not current_user.is_admin:
-            # Tum programlar (ucretsiz dahil) indirme onayi gerektirir
             lisans = (License.query
                       .filter_by(user_id=current_user.id, program_id=program.id, durum="aktif")
                       .order_by(License.bitis.desc()).first())
             if not lisans or not lisans.gecerli_mi:
                 flash(
-                    "Bu programı indirmek için önce onay gereklidir. Talebiniz alınınca "
-                    "size dönüş yapılacak; onaylandığında indirme aktifleşecektir.", "warning"
+                    "Bu programı indirebilmeniz için önce site yöneticisinin onayı gereklidir. "
+                    "Lisans talebiniz değerlendirilip onaylandığında size mail ile ZIP parolası "
+                    "ve indirme bağlantısı iletilecektir.", "warning"
                 )
                 return redirect(url_for("lisans_talep", slug=slug))
+
+        # Master ZIP yolunu cek
+        master = DOWNLOADS_DIR / program.indirme_dosyasi
+        if not master.exists():
+            flash("Program paketi şu an erişilebilir değil. Lütfen daha sonra deneyin.", "danger")
+            return redirect(url_for("program_detay", slug=slug))
+
+        # Admin parolasiz indirir; diger kullanicilarda AES-sifreli ZIP
+        if current_user.is_admin:
+            dl = Download(user_id=current_user.id, program_id=program.id, ip=request.remote_addr)
+            program.indirme_sayisi = (program.indirme_sayisi or 0) + 1
+            db.session.add(dl); db.session.commit()
+            return send_from_directory(str(DOWNLOADS_DIR), program.indirme_dosyasi, as_attachment=True)
+
+        # KORUMA: lisans parolasi yoksa simdi uret + DB'ye yaz
+        if not lisans.zip_parolasi:
+            lisans.zip_parolasi = _yeni_zip_parolasi()
+            db.session.commit()
+
+        try:
+            sifreli = _olustur_sifreli_zip(
+                master, lisans.zip_parolasi, lisans.anahtar or "",
+                current_user.email, program.ad
+            )
+        except Exception as e:
+            print(f"[indir] sifreli ZIP hatasi: {e}")
+            flash("Şifreli paket oluşturulurken hata oluştu. Lütfen iletişime geçin.", "danger")
+            return redirect(url_for("program_detay", slug=slug))
 
         # Indirme kaydi
         dl = Download(user_id=current_user.id, program_id=program.id, ip=request.remote_addr)
         program.indirme_sayisi = (program.indirme_sayisi or 0) + 1
-        db.session.add(dl)
-        db.session.commit()
-        return send_from_directory(str(DOWNLOADS_DIR), program.indirme_dosyasi, as_attachment=True)
+        db.session.add(dl); db.session.commit()
+
+        dosya_adi = program.indirme_dosyasi.replace(".zip", "_LISANSLI.zip")
+        return send_file(
+            sifreli, as_attachment=True, download_name=dosya_adi,
+            mimetype="application/zip"
+        )
 
     @app.route("/lisans-talep/<slug>")
     @login_required
@@ -437,26 +522,43 @@ def create_app() -> Flask:
     def admin_lisans_onayla(lid):
         lisans = License.query.get_or_404(lid)
         lisans.anahtar = _yeni_lisans_anahtari()
+        lisans.zip_parolasi = _yeni_zip_parolasi()  # bu kullaniciya ozel ZIP parolasi
         lisans.durum = "aktif"
         lisans.baslangic = datetime.utcnow()
         lisans.bitis = datetime.utcnow() + timedelta(days=365)  # 1 yil
         lisans.onaylayan = current_user.email
         lisans.onay_tarihi = datetime.utcnow()
         db.session.commit()
-        # Kullaniciya onay maili
+        # Kullaniciya onay maili (lisans + ZIP parolasi)
         kullanici = User.query.get(lisans.user_id)
         prog = Program.query.get(lisans.program_id)
         if kullanici and prog:
+            indir_link = url_for("program_detay", slug=prog.slug, _external=True)
             mailer.send_mail(
                 kullanici.email,
                 f"İndirme onaylandı: {prog.ad}",
                 f"<p>Merhaba {kullanici.ad_soyad},</p>"
                 f"<p><b>{prog.ad}</b> programı için indirme talebiniz <b>onaylandı</b>.</p>"
-                f"<p>Lisans anahtarınız: <b>{lisans.anahtar}</b> (1 yıl geçerli)</p>"
-                f"<p>Programı indirmek için giriş yapın: "
-                f"<a href='{url_for('program_detay', slug=prog.slug, _external=True)}'>Program sayfası</a></p>"
+                f"<h4 style='margin-top:18px;'>📦 İndirme Bilgileri</h4>"
+                f"<ul style='line-height:1.7'>"
+                f"<li><b>Lisans Anahtarı:</b> <code>{lisans.anahtar}</code> (1 yıl geçerli)</li>"
+                f"<li><b>ZIP Parolası:</b> <code>{lisans.zip_parolasi}</code></li>"
+                f"</ul>"
+                f"<p><b>Nasıl indireceksiniz?</b> Siteye giriş yapıp aşağıdaki bağlantıdan ZIP'i indirin; "
+                f"ZIP, AES-256 ile şifrelidir. Açarken yukarıdaki <b>ZIP parolasını</b> girin.</p>"
+                f"<p><a href='{indir_link}' style='background:#d9a521;color:#0b1f44;padding:10px 22px;"
+                f"text-decoration:none;border-radius:6px;font-weight:600;'>Programı İndir →</a></p>"
+                f"<hr>"
+                f"<p style='font-size:12px;color:#666'>"
+                f"<b>Lisans Koşulları:</b> Bu lisans yalnızca size aittir; paylaşılamaz, kopyalanamaz, "
+                f"üzerinde değişiklik yapılamaz. Program her açılışta online lisans doğrulaması yapar; "
+                f"lisans iptali veya süre dolumu halinde çalışmaz. Kopyalama / dağıtma denemesi 5846 "
+                f"sayılı Fikir ve Sanat Eserleri Kanunu m.71 uyarınca yaptırıma tabidir.</p>"
             )
-        flash(f"Lisans onaylandı. Anahtar: {lisans.anahtar} (1 yıl geçerli). Kullanıcıya mail gönderildi.", "success")
+        flash(
+            f"Lisans onaylandı. Anahtar: {lisans.anahtar} · ZIP parolası: {lisans.zip_parolasi} "
+            f"(1 yıl geçerli). Kullanıcıya mail gönderildi.", "success"
+        )
         return redirect(url_for("admin"))
 
     @app.route("/admin/lisans/<int:lid>/iptal")

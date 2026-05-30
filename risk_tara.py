@@ -16,14 +16,20 @@ SPESIFIK = [
     "cibilenymm", "cumhurbilenymm", "CUMHUR İNAN", "CUMHUR INAN",
     "CUMHUR BILEN", "BILEN YMM", "BİLEN YMM", "YAYLA AGRO", "YAYLA AĞRO",
 ]
-# Muhasebe yazilimi markalari (kelime siniri ile)
-MARKALAR = ["KORMAS", "GREEN", "LUCA", "MIKRO", "NETSIS", "ZIRVE",
+# Muhasebe yazilimi markalari (kelime siniri ile).
+# NOT: "GREEN" listeden cikarildi -- renk adi olarak cok yaygin
+# (GREEN = "#1E7E34" gibi sabitler false positive olusturuyordu).
+# "GREEN Yazilimi" gibi tehlikeli kullanimlari SPESIFIK kismina ekleyin.
+MARKALAR = ["KORMAS", "LUCA", "MIKRO", "NETSIS", "ZIRVE",
             "ISIK", "IŞIK", "VEGA", "TIGER", "WINGS"]
 # Gercek vergi/kimlik no'lari (test verisi)
 NUMARALAR = ["3200039053", "2160970424", "51973517132", "006283", "06105060"]
 
-# models.py'deki temizleme listesi (fix_legacy_texts) gercek kullanim degil
-ATLA_SATIR_ICEREN = ['riskli = [', '"NETSIS", "ZIRVE"', 'MARKALAR =', 'SPESIFIK =']
+# models.py / paket_olustur.py icindeki temizleme/dislama listeleri gercek kullanim degil
+ATLA_SATIR_ICEREN = [
+    'riskli = [', '"NETSIS", "ZIRVE"', 'MARKALAR =', 'SPESIFIK =',
+    'RISKLI_PATTERN', 'KORMAS|LUCA',
+]
 
 
 def tara_metin(metin: str, kaynak: str, bulgular: list):
@@ -51,20 +57,31 @@ def main():
     for root, dirs, files in os.walk(base):
         dirs[:] = [d for d in dirs if d not in ("__pycache__", ".git", "data")]
         for f in files:
-            if f.endswith((".py", ".html", ".css", ".js", ".md", ".txt")) and f != "risk_tara.py":
+            # risk_tara.py kendi marka listesini icerir; paket_olustur.py de tarama
+            # araclarinin marka listesini tasir. Iki dosya da tarama disi tutulur.
+            if f in ("risk_tara.py", "paket_olustur.py"):
+                continue
+            if f.endswith((".py", ".html", ".css", ".js", ".md", ".txt")):
                 p = os.path.join(root, f)
                 try:
                     tara_metin(open(p, encoding="utf-8", errors="ignore").read(),
                                os.path.relpath(p, base), bulgular)
                 except Exception:
                     pass
-    # 2) Dagitilan ZIP
-    zpath = os.path.join(base, "downloads", "TT_HESAP_INCELEMELERI_v1.0.zip")
-    if os.path.exists(zpath):
-        z = zipfile.ZipFile(zpath)
-        for n in z.namelist():
-            if n.endswith((".py", ".html", ".css", ".txt", ".md")):
-                tara_metin(z.read(n).decode("utf-8", errors="ignore"), "ZIP:" + n, bulgular)
+    # 2) Dagitilan ZIP'ler (downloads/ icindeki tum .zip dosyalarini tara)
+    dl_dir = os.path.join(base, "downloads")
+    if os.path.isdir(dl_dir):
+        for zname in sorted(os.listdir(dl_dir)):
+            if not zname.lower().endswith(".zip"):
+                continue
+            zpath = os.path.join(dl_dir, zname)
+            try:
+                z = zipfile.ZipFile(zpath)
+            except Exception:
+                continue
+            for n in z.namelist():
+                if n.endswith((".py", ".html", ".css", ".txt", ".md")):
+                    tara_metin(z.read(n).decode("utf-8", errors="ignore"), f"ZIP:{zname}:{n}", bulgular)
 
     if bulgular:
         print("!!! RISK BULUNDU:")

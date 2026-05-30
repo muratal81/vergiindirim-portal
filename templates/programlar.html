@@ -6,7 +6,7 @@
   <div class="container">
     <div class="breadcrumb"><a href="{{ url_for('index') }}">Anasayfa</a> / Programlar</div>
     <h1>Vergi Hesaplama Programları</h1>
-    <p>Özellikli vergi konuları için mali müşavirlik uzmanlığıyla geliştirilmiş, mevzuat referanslı yazılımlar.</p>
+    <p>Özellikli vergi konuları için vergi uzmanlığı ile yazılım teknolojisini bir araya getiren, mevzuat referanslı yazılımlar.</p>
   </div>
 </div>
 
@@ -28,7 +28,8 @@
           <div class="pc-icon">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center;">
+            {% if p.marka %}<span class="badge badge-marka">{{ p.marka }}</span>{% endif %}
             {% if p.ucretsiz %}<span class="badge badge-free">Ücretsiz</span>
             {% else %}<span class="badge badge-paid">{{ "{:,.0f}".format(p.fiyat).replace(",", ".") }} ₺ + KDV</span>{% endif %}
             {% if p.durum == 'gelistirme' %}<span class="badge badge-soon">Yakında</span>{% endif %}

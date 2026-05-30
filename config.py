@@ -44,9 +44,15 @@ class Config:
     # Site bilgileri (sablonlarda kullanilir)
     SITE_ADI = os.environ.get("SITE_ADI", "Vergi İndirim Programları")
     SITE_KISA = os.environ.get("SITE_KISA", "Vergi İndirim")
-    SITE_SLOGAN = os.environ.get("SITE_SLOGAN", "Yasal Vergi İndirim ve İndirimli Matrah Otomasyonu")
+    SITE_SLOGAN = os.environ.get(
+        "SITE_SLOGAN",
+        "Vergi Uzmanlığı ile Yazılım Teknolojisi Bir Arada"
+    )
     SITE_TELEFON = os.environ.get("SITE_TELEFON", "0532 177 47 95")
-    SITE_EMAIL = os.environ.get("SITE_EMAIL", "muratal81@gmail.com")
-    SITE_ADRES = os.environ.get("SITE_ADRES", "Ankara")
+    SITE_EMAIL = os.environ.get("SITE_EMAIL", "info@vergiindirim.com.tr")
+    SITE_ADRES = os.environ.get(
+        "SITE_ADRES",
+        "Kızılırmak Mah. Muhsin Yazıcıoğlu Cd. No: 29/19 Çankaya / Ankara"
+    )
     SITE_SAHIBI = os.environ.get("SITE_SAHIBI", "Murat Alan")
     SITE_DOMAIN = os.environ.get("SITE_DOMAIN", "vergiindirim.com.tr")

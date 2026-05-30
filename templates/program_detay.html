@@ -5,6 +5,7 @@
 <div class="page-head">
   <div class="container">
     <div class="breadcrumb"><a href="{{ url_for('index') }}">Anasayfa</a> / <a href="{{ url_for('programlar') }}">Programlar</a> / {{ program.kategori }}</div>
+    {% if program.marka %}<div style="margin-bottom:10px;"><span class="badge badge-marka" style="font-size:13px;padding:6px 14px;">{{ program.marka }}</span></div>{% endif %}
     <h1>{{ program.ad }}</h1>
     <p>{{ program.kisa_aciklama }}</p>
   </div>
@@ -50,6 +51,10 @@
             <a href="{{ url_for('indir', slug=program.slug) }}" class="btn btn-gold btn-block btn-lg" style="margin-top:16px;">
               ⬇ {% if program.ucretsiz %}Hemen İndir{% else %}Satın Al ve İndir{% endif %}
             </a>
+            <p class="muted" style="font-size:12.5px;text-align:center;margin-top:10px;line-height:1.5;">
+              🔒 İndirme yöneticinin onayını gerektirir. Onaylandığında ZIP parolası mail ile iletilir.
+              ZIP <strong>AES-256</strong> ile şifrelidir, kopyalanamaz/değiştirilemez.
+            </p>
           {% else %}
             <a href="{{ url_for('giris', next=url_for('program_detay', slug=program.slug)) }}" class="btn btn-gold btn-block btn-lg" style="margin-top:16px;">
               Giriş Yap ve İndir

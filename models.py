@@ -44,6 +44,7 @@ class Program(db.Model):
     __tablename__ = "programs"
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    marka = db.Column(db.String(60))  # her programin kendi marka adi (ornek: 'Vİ Rapor')
     ad = db.Column(db.String(200), nullable=False)
     kisa_aciklama = db.Column(db.String(300))
     aciklama = db.Column(db.Text)
@@ -110,6 +111,7 @@ class License(db.Model):
     onaylayan = db.Column(db.String(120))   # admin email
     onay_tarihi = db.Column(db.DateTime)
     son_dogrulama = db.Column(db.DateTime)  # program en son ne zaman dogrulama yapti
+    zip_parolasi = db.Column(db.String(40))  # bu kullaniciya ozel ZIP AES sifresi
     not_ = db.Column(db.String(300))
 
     user = db.relationship("User", backref="lisanslar")
@@ -162,6 +164,7 @@ def seed_programs():
     programlar = [
         {
             "slug": "tt-hesap-incelemeleri",
+            "marka": "Vİ Rapor",
             "ad": "Hesap İncelemeleri Otomasyonu",
             "kisa_aciklama": "Mizan (Excel) + Kurumlar Vergisi Beyannamesi (PDF) → Word formatında bilanço ve gelir tablosu hesap incelemeleri metni",
             "aciklama": (
@@ -176,7 +179,7 @@ def seed_programs():
             "mevzuat": "VUK m.280, VUK Mük. m.298/A, 555 sıra No.lu VUK GT",
             "ucretsiz": False,
             "fiyat": 2500.0,
-            "indirme_dosyasi": "TT_HESAP_INCELEMELERI_v1.0.zip",
+            "indirme_dosyasi": "VI_RAPOR_v1.1.zip",
             "durum": "gelistirme",
             "on_plana_cikar": True,
             "ozellikler": [
@@ -192,6 +195,7 @@ def seed_programs():
         },
         {
             "slug": "arge-indirim-5746",
+            "marka": "Vİ Ar-Ge",
             "ad": "5746 Sayılı Kanun ARGE İndirim Hesaplama Programı",
             "kisa_aciklama": "Bordro + Muhtasar + SGK Bildirgesi → 5746 SK + KVK m.10/1-a kapsamında AR-GE indirimi",
             "aciklama": (
@@ -204,7 +208,7 @@ def seed_programs():
             "mevzuat": "5746 SK m.3, KVK m.10/1-a, 5510 SGK",
             "ucretsiz": False,
             "fiyat": 2500.0,
-            "indirme_dosyasi": "ARGE_INDIRIM_5746_v1.0.zip",
+            "indirme_dosyasi": "VI_ARGE_v1.0.zip",
             "durum": "gelistirme",
             "on_plana_cikar": True,
             "ozellikler": [
@@ -220,6 +224,7 @@ def seed_programs():
         },
         {
             "slug": "fgk-kvk-11-i",
+            "marka": "Vİ FGK",
             "ad": "Finansman Gider Kısıtlaması Hesaplama (KVK m.11/1-i)",
             "kisa_aciklama": "Yabancı kaynak/özkaynak oranı → %10 oranında KKEG hesaplaması",
             "aciklama": (
@@ -246,6 +251,7 @@ def seed_programs():
         },
         {
             "slug": "indirimli-kurumlar-vergisi",
+            "marka": "Vİ Teşvik",
             "ad": "İndirimli Kurumlar Vergisi Hesaplama (KVK m.32/A)",
             "kisa_aciklama": "Yatırım Teşvik Belgesi bazında KVK 32/A, YKT ve asgari KV hesaplama",
             "aciklama": (
@@ -258,7 +264,7 @@ def seed_programs():
             "mevzuat": "KVK m.32/A, KVK m.32/C, 2012/3305 sayılı Karar",
             "ucretsiz": False,
             "fiyat": 19000.0,
-            "indirme_dosyasi": "KVK32A_HESAPLAMA_v1.1.zip",
+            "indirme_dosyasi": "VI_TESVIK_v1.1.zip",
             "durum": "gelistirme",
             "on_plana_cikar": True,
             "ozellikler": [
@@ -331,6 +337,26 @@ def ensure_schema():
         if "reset_expiry" not in kolonlar:
             eklemeler.append("ALTER TABLE users ADD COLUMN reset_expiry TIMESTAMP")
         for sql in eklemeler:
+            try:
+                with db.engine.begin() as conn:
+                    conn.execute(text(sql))
+            except Exception as e:
+                print(f"[ensure_schema] {sql} -> {e}")
+    # programs tablosuna marka kolonu
+    if "programs" in mevcut_tablolar:
+        kolonlar = [c["name"] for c in insp.get_columns("programs")]
+        if "marka" not in kolonlar:
+            sql = "ALTER TABLE programs ADD COLUMN marka VARCHAR(60)"
+            try:
+                with db.engine.begin() as conn:
+                    conn.execute(text(sql))
+            except Exception as e:
+                print(f"[ensure_schema] {sql} -> {e}")
+    # licenses tablosuna zip_parolasi (program AES sifresi)
+    if "licenses" in mevcut_tablolar:
+        kolonlar = [c["name"] for c in insp.get_columns("licenses")]
+        if "zip_parolasi" not in kolonlar:
+            sql = "ALTER TABLE licenses ADD COLUMN zip_parolasi VARCHAR(40)"
             try:
                 with db.engine.begin() as conn:
                     conn.execute(text(sql))
