@@ -145,16 +145,22 @@ def create_app() -> Flask:
     @app.route("/programlar")
     def programlar():
         kategori = request.args.get("kategori")
-        q = Program.query
+        # Pasif programlari liste disinda tut (gizli)
+        q = Program.query.filter(Program.durum != "pasif")
         if kategori:
             q = q.filter_by(kategori=kategori)
         prog_list = q.order_by(Program.on_plana_cikar.desc(), Program.ad).all()
-        kategoriler = [r[0] for r in db.session.query(Program.kategori).distinct() if r[0]]
+        kategoriler = [r[0] for r in
+                       db.session.query(Program.kategori).filter(Program.durum != "pasif").distinct()
+                       if r[0]]
         return render_template("programlar.html", programlar=prog_list, kategoriler=kategoriler, secili_kategori=kategori)
 
     @app.route("/program/<slug>")
     def program_detay(slug):
         program = Program.query.filter_by(slug=slug).first_or_404()
+        # Pasif programlara dogrudan URL ile gelinirse 404
+        if program.durum == "pasif":
+            abort(404)
         ozellikler = ProgramOzellik.query.filter_by(program_id=program.id).order_by(ProgramOzellik.sira).all()
         return render_template("program_detay.html", program=program, ozellikler=ozellikler)
 

@@ -4,11 +4,10 @@
 
 ## İçerik
 
-- **Hesap İncelemeleri Otomasyonu** (Mizan + Beyanname → Word)
-- **5746 sayılı Kanun AR-GE İndirim** hesaplama
-- **Finansman Gider Kısıtlaması** (KVK m.11/1-i)
-- **İndirimli Kurumlar Vergisi** (KVK m.32/A)
-- (Yol haritasında: KKM İstisnası, Enflasyon Düzeltmesi, İştirak Kazançları İstisnası)
+- **Vİ Rapor** — Hesap İncelemeleri Otomasyonu (Mizan + Beyanname → Word)
+- **Vİ Ar-Ge** — 5746 sayılı Kanun AR-GE İndirim hesaplama
+- **Vİ Teşvik** — İndirimli Kurumlar Vergisi (KVK m.32/A)
+- Özellikli vergi konularında yeni programlar yol haritasında
 
 ## KVK 32/A v1.1 Notları
 
@@ -53,4 +52,4 @@ veya Windows için `BASLAT_WEBSITE.bat` çift tıkla.
 
 Tüm program hakları, kaynak kodu ve site sahipliği **Murat Alan** adına kayıtlıdır.
 
-İletişim: muratal81@gmail.com | 0532 177 47 95
+İletişim: info@vergiindirim.com.tr | 0532 177 47 95

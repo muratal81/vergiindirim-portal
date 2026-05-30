@@ -171,7 +171,7 @@ def seed_programs():
                 "Mizan ve Kurumlar Vergisi Beyannamesi verilerinden hareketle bilanço ve gelir "
                 "tablosu hesaplarının inceleme metnini Word formatında otomatik üretir. "
                 "A. Bilanço Hesapları (yabancı para hesapları, MDV/MODV, özkaynaklar dahil) ve "
-                "B. Gelir Tablosu Hesapları (satış, maliyet, faaliyet/finansman giderleri, FGK hesabı, "
+                "B. Gelir Tablosu Hesapları (satış, maliyet, faaliyet ve finansman giderleri, "
                 "dönem karı) bölümleri tam metin olarak Word'e yazılır. Tüm tutarlar mizandan çekilir; "
                 "veri uydurulmaz."
             ),
@@ -188,7 +188,6 @@ def seed_programs():
                 "31.12.2024 / 580 No.lu VUK GT döviz kurları varsayılan",
                 "Yabancı para hesapları için doviz cinsi-kur-TL detay tabloları",
                 "Stoklar, MDV, MODV, Özkaynaklar için detay tabloları",
-                "Finansman Gider Kısıtlaması (KVK m.11/1-i) otomatik hesaplaması",
                 "Beyanname-mizan çapraz mutabakat kontrolu (sarı/kırmızı uyarı)",
                 "Hem masaüstü (tkinter) hem yerel web (Flask) ile çalışır",
             ],
@@ -403,7 +402,7 @@ def update_program_settings():
         # slug: (ucretsiz, fiyat, durum)  durum: aktif|gelistirme|pasif
         "tt-hesap-incelemeleri":      (False, 2500.0,  "aktif"),       # YAYINDA — kisitli indirme
         "arge-indirim-5746":          (False, 2500.0,  "gelistirme"),
-        "fgk-kvk-11-i":               (True,  0.0,     "gelistirme"),
+        "fgk-kvk-11-i":               (True,  0.0,     "pasif"),       # GIZLI — site icinde gosterilmez
         "indirimli-kurumlar-vergisi": (False, 19000.0, "gelistirme"),
     }
     for slug, (ucretsiz, fiyat, durum) in ayarlar.items():
@@ -412,4 +411,7 @@ def update_program_settings():
             p.ucretsiz = ucretsiz
             p.fiyat = fiyat
             p.durum = durum
+            # Pasif programlari on plana cikartma
+            if durum == "pasif":
+                p.on_plana_cikar = False
     db.session.commit()

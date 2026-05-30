@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{{ SITE_ADI }}{% endblock %}</title>
-  <meta name="description" content="{% block meta_desc %}{{ SITE_ADI }} — {{ SITE_SLOGAN }}. Hesap İncelemeleri, AR-GE İndirimi, Finansman Gider Kısıtlaması ve İndirimli Kurumlar Vergisi için vergi uzmanlığı ile yazılım teknolojisini bir araya getiren hesaplama yazılımları.{% endblock %}">
+  <meta name="description" content="{% block meta_desc %}{{ SITE_ADI }} — {{ SITE_SLOGAN }}. Hesap İncelemeleri, AR-GE İndirimi ve İndirimli Kurumlar Vergisi için vergi uzmanlığı ile yazılım teknolojisini bir araya getiren hesaplama yazılımları.{% endblock %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20260530b">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20260530c">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23102a5c'/><text x='50' y='70' font-size='54' font-family='Arial' font-weight='bold' fill='%23f3d27e' text-anchor='middle'>V</text></svg>">
   {% block head_extra %}{% endblock %}
 </head>
@@ -95,7 +95,6 @@
           <h4>Programlar</h4>
           <a href="{{ url_for('program_detay', slug='tt-hesap-incelemeleri') }}">Hesap İncelemeleri Otomasyonu</a>
           <a href="{{ url_for('program_detay', slug='arge-indirim-5746') }}">5746 AR-GE İndirimi</a>
-          <a href="{{ url_for('program_detay', slug='fgk-kvk-11-i') }}">Finansman Gider Kısıtlaması</a>
           <a href="{{ url_for('program_detay', slug='indirimli-kurumlar-vergisi') }}">İndirimli Kurumlar Vergisi</a>
           <a href="{{ url_for('programlar') }}">Tüm Programlar →</a>
         </div>
