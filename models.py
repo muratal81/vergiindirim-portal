@@ -401,7 +401,7 @@ def update_program_settings():
     ucret ve durum gibi yayin ayarlarini merkezi olarak korur."""
     ayarlar = {
         # slug: (ucretsiz, fiyat, durum)  durum: aktif|gelistirme|pasif
-        "tt-hesap-incelemeleri":      (False, 2500.0,  "gelistirme"),
+        "tt-hesap-incelemeleri":      (False, 2500.0,  "aktif"),       # YAYINDA — kisitli indirme
         "arge-indirim-5746":          (False, 2500.0,  "gelistirme"),
         "fgk-kvk-11-i":               (True,  0.0,     "gelistirme"),
         "indirimli-kurumlar-vergisi": (False, 19000.0, "gelistirme"),
