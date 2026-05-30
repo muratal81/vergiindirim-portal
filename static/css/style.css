@@ -692,3 +692,141 @@ a:focus-visible, .btn:focus-visible, .field input:focus-visible,
 .t-meta strong { color: #fff; font-size: 14.5px; font-family: var(--font-head); }
 .t-meta span { color: var(--slate-400); font-size: 12.5px; }
 
+/* ============================================================
+   v6 HIBRIT LEIN — sade ic bolumler, numarali kartlar, metrikler
+   - Hero koyu KALDI (lacivert + altin = marka DNA'si)
+   - Aurora ve efektler hafifletildi (Lein-ish disiplin)
+   - "Neden Biz" ve "Degerlendirmeler" navy'den ACIGA cevrildi
+   - Program kartlari 01/03 02/03 numara band ile
+   - Vaka metrigi bandi (zaman tasarrufu, mevzuat sayisi)
+   - Hover effect'leri yumusatildi (subtle Lein lift)
+   ============================================================ */
+
+/* Hero efektleri hafifletildi (Lein-vari disiplin) */
+.hero::after { filter: blur(36px); opacity: .7; animation-duration: 24s; }
+.hero h1 { letter-spacing: -.025em; }
+.hero p.lead { font-size: 18.5px; max-width: 720px; }
+.hero-stats .stat .num { font-size: 34px; }
+.hero { padding: 100px 0 110px; }
+
+/* Logo sheen yavasla (cok belirgin olmasin) */
+.logo-mark::after { animation-duration: 12s; }
+
+/* "Neden Biz" artik ACIK ZEMIN (Lein gibi sade icerik) */
+section.block.navy.lite {
+  background: #fff;
+  color: var(--ink);
+  position: relative; overflow: hidden;
+}
+section.block.navy.lite::before,
+section.block.navy.lite::after { display: none; }
+section.block.navy.lite .section-head.on-navy h2 { color: var(--navy-800); }
+section.block.navy.lite .section-head.on-navy p { color: var(--slate-500); }
+section.block.navy.lite .section-head .eyebrow { color: var(--gold-500); }
+section.block.navy.lite .feature h3 { color: var(--navy-800); }
+section.block.navy.lite .feature p { color: var(--slate-500); }
+section.block.navy.lite .feature .f-icon {
+  background: var(--gold-soft); color: var(--gold-500);
+  box-shadow: none;
+}
+
+/* Vaka metrigi bandi (Lein "%340 buyume" tarzi) */
+.metric-strip {
+  background: linear-gradient(180deg, #fff, #f8fafc);
+  border-top: 1px solid var(--slate-200);
+  border-bottom: 1px solid var(--slate-200);
+  padding: 44px 0;
+}
+.metric-strip .container {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; align-items: center;
+}
+.metric { text-align: center; padding: 0 6px; }
+.metric .m-num {
+  font-family: var(--font-head); font-size: 38px; font-weight: 800;
+  color: var(--navy-800); margin-bottom: 6px; letter-spacing: -.02em; line-height: 1;
+  background: linear-gradient(135deg, var(--navy-700), var(--navy-500));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.metric .m-lbl {
+  font-size: 13px; color: var(--slate-500); letter-spacing: .015em; line-height: 1.4;
+}
+.metric .m-cap {
+  font-size: 11.5px; color: var(--gold-500); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .12em; margin-bottom: 8px;
+}
+@media (max-width: 980px) {
+  .metric-strip .container { grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .metric .m-num { font-size: 32px; }
+}
+
+/* Program karti numara badge (Lein 01/12 tarzi) */
+.prog-card { padding-top: 38px; }
+.prog-num {
+  position: absolute; top: 16px; left: 22px;
+  font-family: var(--font-head); font-weight: 700; font-size: 12.5px;
+  color: var(--slate-400); letter-spacing: .14em;
+}
+.prog-card:hover .prog-num { color: var(--gold-500); }
+
+/* Lein tarzi sade hover lift */
+.prog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(11,31,68,.10), 0 0 0 1px rgba(217,165,33,.25);
+}
+.ref-item:hover { box-shadow: 0 12px 28px rgba(11,31,68,.08); }
+
+/* Testimonial artik ACIK zemin (Lein-ish) */
+section.block.navy.testimonials {
+  background: #f8fafc;
+  position: relative; overflow: hidden;
+}
+section.block.navy.testimonials::before,
+section.block.navy.testimonials::after { display: none; }
+section.block.navy.testimonials .section-head.on-navy h2 { color: var(--navy-800); }
+section.block.navy.testimonials .section-head.on-navy p { color: var(--slate-500); }
+section.block.navy.testimonials .testi {
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  box-shadow: 0 8px 24px rgba(11,31,68,.06);
+  backdrop-filter: none;
+}
+section.block.navy.testimonials .testi p { color: var(--slate-700); }
+section.block.navy.testimonials .testi::before { color: rgba(245,197,66,.35); }
+section.block.navy.testimonials .t-stars { color: var(--gold-500); }
+section.block.navy.testimonials .t-meta { border-top-color: var(--slate-200); }
+section.block.navy.testimonials .t-meta strong { color: var(--navy-800); }
+section.block.navy.testimonials .t-meta span { color: var(--slate-500); }
+section.block.navy.testimonials .testi:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(11,31,68,.10);
+  border-color: rgba(245,197,66,.35);
+}
+
+/* Steps numarasi: Lein-ish ince cerceve + sade */
+.steps-flow .step .s-num {
+  background: #fff;
+  border: 2px solid var(--navy-700);
+  color: var(--navy-800);
+  box-shadow: 0 4px 14px rgba(11,31,68,.10);
+}
+.steps-flow .step:not(:last-child)::before { box-shadow: 0 0 8px rgba(245,197,66,.4); }
+
+/* Hedef Kitle 4 col (Lein "Neden Lein?" tarzi) */
+.ref-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 980px) { .ref-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .ref-grid { grid-template-columns: 1fr; } }
+.ref-item { padding: 16px 16px; }
+.ref-ico { width: 44px; height: 44px; font-size: 19px; }
+.ref-tx strong { font-size: 14.5px; }
+.ref-tx span { font-size: 12.5px; }
+
+/* Section padding'leri biraz sıkıştır (Lein disiplini) */
+section.block { padding: 72px 0; }
+.section-head { margin-bottom: 44px; }
+.section-head h2 { font-size: 34px; }
+
+/* Trust bar Lein tarzi minimal yatay */
+.trustbar { padding: 22px 0; }
+.trustbar .ti { font-size: 13.5px; color: var(--slate-700); font-weight: 500; }
+
+
