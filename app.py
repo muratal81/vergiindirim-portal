@@ -138,9 +138,13 @@ def create_app() -> Flask:
     # ------------------ ANA ROUTE'LAR ----------------------
     @app.route("/")
     def index():
-        on_plan = Program.query.filter_by(on_plana_cikar=True, durum="aktif").all()
-        gelistirme = Program.query.filter_by(durum="gelistirme").all()
-        return render_template("index.html", on_plan=on_plan, gelistirme=gelistirme)
+        # Tum on plana cikan programlar (aktif + gelistirme); pasif gizli
+        on_plan = (Program.query
+                   .filter(Program.on_plana_cikar.is_(True), Program.durum != "pasif")
+                   .order_by(Program.durum.desc(), Program.ad).all())
+        # Gelistirme listesi artik on_plan icinde yer aldigi icin bos donduruyoruz
+        # (sablon kosulu olarak {% if gelistirme %} ile bu bolum gizlenir)
+        return render_template("index.html", on_plan=on_plan, gelistirme=[])
 
     @app.route("/programlar")
     def programlar():
